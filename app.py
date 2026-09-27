@@ -8,6 +8,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+# Modelo
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -19,10 +20,12 @@ class Article(db.Model):
 with app.app_context():
     db.create_all()
 
+# Ruta inicial.
 @app.route('/')
 def home():
     return 'Hola, mundo'
 
+# Se obtienen todos los articulos.
 @app.route('/articles', methods = ['GET'])
 def get_articles():
     articles = Article.query.all()
@@ -32,33 +35,55 @@ def get_articles():
         'content': article.content
     } for Article in articles])
 
-@app.route('/create-article', methods = ['GET', 'POST'])
+# Se crean articulos.
+@app.route('/create-article', methods = ['POST'])
 def create_article():
-    if request.method ==  'POST':
-    
-        title = request.form.get('title')
-        content = request.form.get('content')
+    data = request.get_json()
+    new_article = Article(title=data['title'], content=data['content'])
+    db.session.add(new_article)
+    db.session.commit()
 
-        new_article = Article(title=title, content=content)
-        db.session.add(new_article)
-        db.session.commit()
+    return jsonify({
+        'id': new_article.id,
+        'title': new_article.title,
+        'content':new_article.content
+    }), 201
 
-        return f'Articulo creado {new_article}, contenido {new_article.content}'
+# Se actualizan articulos.
+@app.route('/articles/<int:id>', methods=['PUT'])
+def update_article(id):
+    article = Article.query.get_or_404(id)
+    data = request.get_json()
+    article.title = data['title']
+    article.content = data['content']
+    db.session.commit()
 
-    return '''
-        <form method='POST' action="create-article">
-            <label for='title' > Titulo del articulo:</label><br>
-            <input type='text' id='title' name='title'><br><br>
-            <label for='content' > Contenido del articulo:</label><br>
-            <textarea name='content' id='content'></textarea><br><br>
-            <input type='submit' id='title' value='Crear Articulo'>
-        </form>    
-'''
+    return jsonify({
+        'id': article.id,
+        'title': article.title,
+        'content': article.content
+    })
 
+# Se eliminan articulos.  
+@app.route('/articles/<int:id>', methods=['DELETE'])
+def delete_article(id):
+    article = Article.query.get_or_404(id)
+    db.session.delete(article)
+    db.session.commit()
+    return jsonify({
+        'message': f'Articulo {id} eliminado con exito.'
+    }), 200
+
+# Obtenemos un articulo.
 @app.route('/article/<int:article_id>')
 def view_article(article_id):
     article = Article.query.get_or_404(article_id)
-    return f'Articulo {article.title}, Contenido: {article.content}'
+    return jsonify({
+        'id': article.id,
+        'title': article.title,
+        'content': article.content
+    })
+
 
 
 if __name__ == '__main__':
