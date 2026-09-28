@@ -1,0 +1,7 @@
+$kind: http-request
+url: http://127.0.0.1:5000/articles/2
+method: DELETE
+body:
+  type: json
+  content: ""
+order: 4501454059490732

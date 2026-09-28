@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://127.0.0.1:5000/create-article
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"title\": \"App web\",\r
+
+    \    \"content\": \"Aplicacion web para cafeteria.\"\r
+
+    }"
+order: 1504872324313551

@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://127.0.0.1:5000/articles/2
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"title\": \"Postman\",\r
+
+    \    \"content\": \"Pruebas de endpoints en Postaman.\"\r
+
+    }"
+order: 4063110505421125

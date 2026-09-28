@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
+from Models import db
 
 # Modelo
 class Article(db.Model):

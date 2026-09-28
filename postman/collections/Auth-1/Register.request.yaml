@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://127.0.0.1:5000/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \   \"username\": \"DevMoon\",\r
+
+    \   \"email\": \"devmoon@gmail.com\",\r
+
+    \   \"password\": \"123\"\r
+
+    }"
+order: 1790558191538

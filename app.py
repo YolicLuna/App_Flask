@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
-from Models.article import db, Article
+from Models.article import Article
+from Models.user import User
+from Models import db
 
 app = Flask(__name__)
 
@@ -16,6 +18,34 @@ with app.app_context():
 def home():
     return 'Hola, mundo'
 
+@app.route('/register', methods = ['POST'])
+def register_user():
+    data = request.get_json()
+    if User.query.filter_by(email = data ['email']).first() is not None:
+        return jsonify({
+            'error': 'El email ya esta reistrado.'
+        }), 400
+
+    new_user = User(username=data['username'], email=data['email'])
+    new_user.set_password(data['password'])
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({
+        'message': f'Usuario {new_user.username} registrado con exito.'
+    }), 200
+
+@app.route('/login', methods = ['POST'])
+def login_user():
+    data = request.get_json()
+    user = User.query.filter_by(email=data['email']).first()
+    if user is None or not user.check_password_hash(data['password']):
+        return jsonify({
+            'error': 'Credenciales invalidad.'
+        })
+    return jsonify({
+        'message': f'Bienvenido {user.username}'
+    })
+    
 # Se obtienen todos los articulos.
 @app.route('/articles', methods = ['GET'])
 def get_articles():
