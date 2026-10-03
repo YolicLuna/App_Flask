@@ -20,6 +20,7 @@ API sencilla para administrar artículos y usuarios. Está construida con Flask 
 
 - Python instalado.
 - `pip` para instalar las dependencias.
+- Node.js y `npm` para ejecutar el frontend.
 
 ## Instalación y ejecución
 
@@ -67,9 +68,9 @@ La carpeta `Articles` contiene solicitudes para crear, consultar, actualizar y e
 
 ## Frontend
 
-El proyecto también incluye un frontend inicial en `app-blog/`, desarrollado con React y Next.js. Actualmente consulta la ruta de artículos de la API; su interfaz todavía está en desarrollo.
+El frontend está en `app-blog/` y está desarrollado con React y Next.js. La página principal consulta los artículos de la API y los muestra en tarjetas con su título y un fragmento del contenido. También incluye una estructura compartida con barra de navegación y pie de página.
 
-Para iniciarlo, abre una terminal en esa carpeta y ejecuta:
+Para iniciarlo, primero asegúrate de que la API Flask esté ejecutándose. Después, abre una terminal en `app-blog/` y ejecuta:
 
 ```powershell
 npm install
