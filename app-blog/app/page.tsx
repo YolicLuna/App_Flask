@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Layout from "./components/Layout";
+import Link from "next/link";
 
 interface Article{
   id: number;
@@ -34,8 +35,11 @@ export default function Home() {
                 transition-shadow duration-300">
                   <h2 className="text-2xl font-bold text-indigo-600 mb-2">{article.title}</h2>
                   <p>{article.content.slice(0, 100)}...</p>
-                  <a href={`/article/${article.id}`} className="text-indigo-600 font-semibold
-                  hover:text-indigo-400">Leer mas</a>
+                  <Link href={`/article/${article.id}`}>
+                    <span className="text-indigo-600 font-semibold hover:text-indigo-400">
+                      Leer mas
+                    </span>
+                  </Link>
                 </div>
               ))
             }
