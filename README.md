@@ -15,6 +15,10 @@ API sencilla para administrar artículos y usuarios. Está construida con Flask 
 - Registrar usuarios e iniciar sesión.
 - Guardar las contraseñas como hashes.
 - Probar las solicitudes con las colecciones de Postman incluidas.
+- Mostrar artículos en la Home con un diseño de tarjetas.
+- Navegar dinámicamente a cada artículo desde su identificador en la ruta `/article/[id]`.
+- Mejorar la navegación visual con un navbar reutilizable y una estructura general de layout.
+- Usar iconos de Font Awesome para mejorar la apariencia del menú y los elementos de navegación.
 
 ## Requisitos
 
@@ -68,12 +72,15 @@ La carpeta `Articles` contiene solicitudes para crear, consultar, actualizar y e
 
 ## Frontend
 
-El frontend está en `app-blog/` y está desarrollado con React y Next.js. La página principal consulta los artículos de la API y los muestra en tarjetas con su título y un fragmento del contenido. También incluye una estructura compartida con barra de navegación y pie de página.
+El frontend está en `app-blog/` y está desarrollado con React y Next.js. La página principal consulta los artículos de la API y los muestra en tarjetas con su título y un fragmento del contenido. También se añadió una estructura visual común con `Layout`, `Navbar` y `Footer`, además de una navegación dinámica para ver cada artículo en su propia vista.
+
+La navegación dinámica se implementó con rutas del tipo `/article/[id]`, para abrir un contenido específico según el identificador del artículo. Esto permite pasar desde la Home a la vista del detalle sin perder la estructura general de la app.
 
 Para iniciarlo, primero asegúrate de que la API Flask esté ejecutándose. Después, abre una terminal en `app-blog/` y ejecuta:
 
 ```powershell
 npm install
+npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons
 npm run dev
 ```
 
