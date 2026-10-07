@@ -8,7 +8,7 @@ const Navbar = () => {
         <nav className="bg-devmoon-dark text-white p-4 border-b border-devmoon-indigo/30">
             <div className="container mx-auto flex justify-between items-center">
                 <a href="/" className="flex items-center space-x-2">
-                    <Image src="/image.png" alt="DevMoon" width={36} height={36} />
+                    <Image src="/image.png" alt="DevMoon" width={36} height={36} className="w-9 h-9" />
                     <span className="text-xl font-bold bg-gradient-to-r from-devmoon-indigo to-devmoon-accent bg-clip-text text-transparent">
                         DevMoon
                     </span>

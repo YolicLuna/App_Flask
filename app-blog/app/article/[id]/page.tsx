@@ -23,7 +23,7 @@ const ArticlePage = ({ params }: { params: Promise<{ id: string }> }) => {
     return (
       <Layout>
         <div className="container mx-auto py-10">
-          <p className="text-center">Cargando artículo...</p>
+          <p className="text-center text-gray-300">Cargando artículo...</p>
         </div>
       </Layout>
     );
@@ -31,8 +31,8 @@ const ArticlePage = ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <Layout>
       <div className="container mx-auto py-10">
-        <h1 className="text-4xl font-bold mb-6 text-indigo-600">{article.title}</h1>
-        <p className="text-gray-700">{article.content}</p>
+        <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-devmoon-indigo to-devmoon-accent bg-clip-text text-transparent">{article.title}</h1>
+        <p className="text-gray-200">{article.content}</p>
       </div>
     </Layout>
   );

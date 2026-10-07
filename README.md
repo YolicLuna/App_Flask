@@ -22,6 +22,8 @@ API sencilla para administrar artículos y usuarios, con una interfaz web de blo
 - Personalizar la identidad visual con branding de DevMoon, paleta oscura y estilos modernos.
 - Mostrar una lista de proyectos en la Home con diseño tipo blog.
 - Abrir una vista detallada de cada artículo desde la ruta dinámica `/article/[id]`.
+- Usar un componente `Card` reutilizable para cada artículo en la Home.
+- Incorporar un diseño visual con logo, buscador y acceso a crear artículo e iniciar sesión.
 
 ## Requisitos
 
@@ -80,10 +82,11 @@ El frontend está en `app-blog/` y está desarrollado con React y Next.js. La p�
 Entre los cambios recientes destacan:
 
 - Branding de DevMoon con paleta oscura, colores personalizados y textos con gradiente.
-- Navbar mejorado con buscador, logo y accesos a "Crear Artículo" e "Inicio de Sesión".
-- Home con título principal "Lista de Proyectos" y tarjetas de artículos.
-- Vista de detalle para cada artículo en `/article/[id]`.
+- Navbar mejorado con logo, buscador visual, acceso a "Crear Artículo" e "Inicio de Sesión" y uso de iconos de Font Awesome.
+- Home con título principal "Lista de Proyectos" y tarjetas reutilizables para cada artículo.
+- Vista de detalle para cada artículo en `/article/[id]` con contenido integrado en una página dedicada.
 - Layout global para mantener una estructura visual consistente en toda la aplicación.
+- Uso de estilos propios con variables de color para la identidad visual del blog.
 
 La navegación dinámica se implementó con rutas del tipo `/article/[id]`, para abrir un contenido específico según el identificador del artículo. Esto permite pasar desde la Home a la vista del detalle sin perder la estructura general de la app.
 
