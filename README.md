@@ -1,6 +1,6 @@
-# Blog API
+# DevMoon Blog
 
-API sencilla para administrar artículos y usuarios. Está construida con Flask y guarda la información en una base de datos SQLite.
+API sencilla para administrar artículos y usuarios, con una interfaz web de blog desarrollada en Next.js. El proyecto combina Flask y SQLite en el backend, y una experiencia visual moderna con branding personalizado en el frontend.
 
 ![Python](https://img.shields.io/badge/Python-Programming-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-API-black.svg)
@@ -19,6 +19,9 @@ API sencilla para administrar artículos y usuarios. Está construida con Flask 
 - Navegar dinámicamente a cada artículo desde su identificador en la ruta `/article/[id]`.
 - Mejorar la navegación visual con un navbar reutilizable y una estructura general de layout.
 - Usar iconos de Font Awesome para mejorar la apariencia del menú y los elementos de navegación.
+- Personalizar la identidad visual con branding de DevMoon, paleta oscura y estilos modernos.
+- Mostrar una lista de proyectos en la Home con diseño tipo blog.
+- Abrir una vista detallada de cada artículo desde la ruta dinámica `/article/[id]`.
 
 ## Requisitos
 
@@ -73,6 +76,14 @@ La carpeta `Articles` contiene solicitudes para crear, consultar, actualizar y e
 ## Frontend
 
 El frontend está en `app-blog/` y está desarrollado con React y Next.js. La página principal consulta los artículos de la API y los muestra en tarjetas con su título y un fragmento del contenido. También se añadió una estructura visual común con `Layout`, `Navbar` y `Footer`, además de una navegación dinámica para ver cada artículo en su propia vista.
+
+Entre los cambios recientes destacan:
+
+- Branding de DevMoon con paleta oscura, colores personalizados y textos con gradiente.
+- Navbar mejorado con buscador, logo y accesos a "Crear Artículo" e "Inicio de Sesión".
+- Home con título principal "Lista de Proyectos" y tarjetas de artículos.
+- Vista de detalle para cada artículo en `/article/[id]`.
+- Layout global para mantener una estructura visual consistente en toda la aplicación.
 
 La navegación dinámica se implementó con rutas del tipo `/article/[id]`, para abrir un contenido específico según el identificador del artículo. Esto permite pasar desde la Home a la vista del detalle sin perder la estructura general de la app.
 
