@@ -5,12 +5,18 @@ interface CardProps{
     id: number;
     title: string;
     content: string;
+    image_url: string;
 }
 
-const Card: React.FC<CardProps> = ({id, title, content}) => {
+const Card: React.FC<CardProps> = ({id, title, content, image_url}) => {
     return (
         <div className="bg-gray-100 shadow-lg overflow-hidden hover:shadow-xl
         transition-shadow duration-300">
+            {
+                image_url && (
+                    <img src={image_url} alt={title} className="w-full h-48 object-cover"/>
+                )
+            }
             <div className="p-6">
                 <h2 className="text-2xl font-bold text-devmoon-indigo mb-2">{title}</h2>
                 <p className="text-gray-700">{content.slice(0,100)}...</p>

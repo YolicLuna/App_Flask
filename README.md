@@ -15,7 +15,7 @@ API sencilla para administrar artículos y usuarios, con una interfaz web de blo
 - Registrar usuarios e iniciar sesión.
 - Guardar las contraseñas como hashes.
 - Probar las solicitudes con las colecciones de Postman incluidas.
-- Mostrar artículos en la Home con un diseño de tarjetas.
+- Mostrar artículos en la Home con un diseño de tarjetas y soporte para imágenes.
 - Navegar dinámicamente a cada artículo desde su identificador en la ruta `/article/[id]`.
 - Mejorar la navegación visual con un navbar reutilizable y una estructura general de layout.
 - Usar iconos de Font Awesome para mejorar la apariencia del menú y los elementos de navegación.
@@ -24,6 +24,7 @@ API sencilla para administrar artículos y usuarios, con una interfaz web de blo
 - Abrir una vista detallada de cada artículo desde la ruta dinámica `/article/[id]`.
 - Usar un componente `Card` reutilizable para cada artículo en la Home.
 - Incorporar un diseño visual con logo, buscador y acceso a crear artículo e iniciar sesión.
+- Soportar imágenes por artículo con campo `image_url` en la API y en la vista principal del blog.
 
 ## Requisitos
 
@@ -83,12 +84,14 @@ Entre los cambios recientes destacan:
 
 - Branding de DevMoon con paleta oscura, colores personalizados y textos con gradiente.
 - Navbar mejorado con logo, buscador visual, acceso a "Crear Artículo" e "Inicio de Sesión" y uso de iconos de Font Awesome.
-- Home con título principal "Lista de Proyectos" y tarjetas reutilizables para cada artículo.
+- Home con título principal "Lista de Proyectos" y tarjetas reutilizables para cada artículo, incluyendo imágenes si están disponibles.
 - Vista de detalle para cada artículo en `/article/[id]` con contenido integrado en una página dedicada.
 - Layout global para mantener una estructura visual consistente en toda la aplicación.
 - Uso de estilos propios con variables de color para la identidad visual del blog.
 
 La navegación dinámica se implementó con rutas del tipo `/article/[id]`, para abrir un contenido específico según el identificador del artículo. Esto permite pasar desde la Home a la vista del detalle sin perder la estructura general de la app.
+
+Además, el modelo de artículo ya incluye un campo `image_url`, y la API devuelve esta propiedad para que la Home pueda renderizar una imagen en cada tarjeta del blog.
 
 Para iniciarlo, primero asegúrate de que la API Flask esté ejecutándose. Después, abre una terminal en `app-blog/` y ejecuta:
 
