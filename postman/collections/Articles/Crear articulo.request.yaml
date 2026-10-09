@@ -3,11 +3,10 @@ url: http://127.0.0.1:5000/create-article
 method: POST
 body:
   type: json
-  content: "{\r
-
-    \    \"title\": \"App web\",\r
-
-    \    \"content\": \"Aplicacion web para cafeteria.\"\r
-
-    }"
+  content: |-
+    {
+        "title": "Hotel app",
+        "content": "Aplicacion web para adminitracion de hoteles.",
+        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL5PesOxilS9SO8uz9v7JwTs5paCiv8UAqpj9cIXouQA&s=10"
+    }
 order: 1504872324313551
