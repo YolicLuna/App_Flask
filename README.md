@@ -27,6 +27,8 @@ API sencilla para administrar artículos y usuarios, con una interfaz web de blo
 - Soportar imágenes por artículo con campo `image_url` en la API y en la vista principal del blog.
 - Gestionar sesiones de usuario con Flask `session`, incluyendo login y comprobación de autenticación.
 - Exponer endpoints de autenticación para verificar si el usuario está autenticado y cerrar sesión.
+- Conectar el frontend con cookies de sesión para mostrar contenido condicional según el estado de autenticación.
+- Mostrar el botón de "Crear Artículo" solo cuando el usuario está autenticado y permitir cerrar sesión desde el navbar.
 
 ## Requisitos
 
@@ -88,6 +90,7 @@ Entre los cambios recientes destacan:
 
 - Branding de DevMoon con paleta oscura, colores personalizados y textos con gradiente.
 - Navbar mejorado con logo, buscador visual, acceso a "Crear Artículo" e "Inicio de Sesión" y uso de iconos de Font Awesome.
+- Navbar con lógica de sesión: si el usuario está autenticado, muestra "Crear Artículo" y "Cerrar Sesión"; si no, muestra "Inicio de Sesión".
 - Home con título principal "Lista de Proyectos" y tarjetas reutilizables para cada artículo, incluyendo imágenes si están disponibles.
 - Vista de detalle para cada artículo en `/article/[id]` con contenido integrado en una página dedicada.
 - Layout global para mantener una estructura visual consistente en toda la aplicación.
@@ -97,7 +100,7 @@ La navegación dinámica se implementó con rutas del tipo `/article/[id]`, para
 
 Además, el modelo de artículo ya incluye un campo `image_url`, y la API devuelve esta propiedad para que la Home pueda renderizar una imagen en cada tarjeta del blog.
 
-En la parte de autenticación, la API usa sesiones de Flask para identificar al usuario logueado, con rutas para iniciar sesión, comprobar autenticación y cerrar sesión.
+En la parte de autenticación, la API usa sesiones de Flask para identificar al usuario logueado, con rutas para iniciar sesión, comprobar autenticación y cerrar sesión. El frontend consume estas rutas con `credentials: 'include'` para mantener la sesión usando cookies y mostrar opciones condicionales en el navbar.
 
 Para iniciarlo, primero asegúrate de que la API Flask esté ejecutándose. Después, abre una terminal en `app-blog/` y ejecuta:
 
