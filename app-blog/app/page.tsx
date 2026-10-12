@@ -14,7 +14,6 @@ interface Article{
 export default function Home() {
 
   const [articles, setArticles] = useState<Article[]>([])
-  console.log(articles)
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/articles')

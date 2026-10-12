@@ -6,7 +6,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, supports_credentials=True, origins=['http://localhost:3000'])
 
 app.secret_key = 'Moon159'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
@@ -42,20 +42,20 @@ def register_user():
 def login_user():
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
-    if user and user.check_password(data=['password']):
+    if user and user.check_password(data['password']):
         session['user_id'] = user.id
         return jsonify({'message': 'Inicio de sesion exitoso'}), 201
     else:
-        return jsonify({'error': 'Credenciales invalidas'}), 401
+        return jsonify({'error': 'Credenciales invalidas'}), 401 
 
 @app.route('/check-auth', methods=['GET'])
 def check_auth():
     if 'user_id' in session:
         return jsonify({'authenticated': True}), 200
     else:
-        return jsonify({'autenthicated': FALSE}), 401
+        return jsonify({'authenticated': False}), 200
 
-@app.route('logout', methods=['POST'])
+@app.route('/logout', methods=['POST'])
 def logout_user():
     session.pop('user_id', None)
     return jsonify({'message': 'Sesion cerrada con exito.'})
