@@ -6,7 +6,13 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app, supports_credentials=True, origins=['http://localhost:3000'])
+CORS(app, 
+supports_credentials=True, 
+origins=['http://localhost:3000'],
+allow_headers=['Content-Type'],
+expose_headers=['Set-Cookie'],
+methods=['GET', 'POST', 'OPTIONS']
+)
 
 app.secret_key = 'Moon159'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
@@ -68,17 +74,21 @@ def get_articles():
         'id': article.id,
         'title': article.title,
         'content': article.content,
-        'image_url': article.image_url
+        'image_url': article.image_url,
+        'author': article.author.username,
+        'created_at': article.created_at.strftime('%d-%m-%Y')
     } for article in articles])
 
 # Se crean articulos.
 @app.route('/create-article', methods = ['POST'])
 def create_article():
     data = request.get_json()
+    user_id = session.get('user_id')
     new_article = Article(
         title=data['title'], 
         content=data['content'],
-        image_url=data['image_url']
+        image_url=data['image_url'],
+        user_id=user_id
         )
     db.session.add(new_article)
     db.session.commit()
@@ -87,7 +97,8 @@ def create_article():
         'id': new_article.id,
         'title': new_article.title,
         'content':new_article.content,
-        'image_url': new_article.image_url
+        'image_url': new_article.image_url,
+        'author': new_article.author.username
     }), 201
 
 # Se actualizan articulos.

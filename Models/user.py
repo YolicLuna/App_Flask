@@ -6,6 +6,7 @@ class User(db.Model):
     username = db.Column(db.String(50), unique = True, nullable = False)
     email = db.Column(db.String(100), unique = True, nullable = False)
     password = db.Column(db.String(1250), nullable = False)
+    articles = db.relationship('Article', backref='author', lazy=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

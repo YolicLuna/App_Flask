@@ -9,6 +9,8 @@ interface Article{
   title: string;
   content: string;
   image_url: string;
+  author: string;
+  created_at: string;
 }
 
 export default function Home() {
@@ -37,6 +39,8 @@ export default function Home() {
               title={article.title}
               content={article.content}
               image_url={article.image_url}
+              author={article.author}
+              created_at={article.created_at}
               />
               ))
             }
