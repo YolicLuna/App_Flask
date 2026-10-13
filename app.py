@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from Models.article import Article
 from Models.user import User
 from Models import db
@@ -6,8 +6,15 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, 
+supports_credentials=True, 
+origins=['http://localhost:3000'],
+allow_headers=['Content-Type'],
+expose_headers=['Set-Cookie'],
+methods=['GET', 'POST', 'OPTIONS']
+)
 
+app.secret_key = 'Moon159'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -41,13 +48,23 @@ def register_user():
 def login_user():
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
-    if user is None or not user.check_password_hash(data['password']):
-        return jsonify({
-            'error': 'Credenciales invalidad.'
-        })
-    return jsonify({
-        'message': f'Bienvenido {user.username}'
-    })
+    if user and user.check_password(data['password']):
+        session['user_id'] = user.id
+        return jsonify({'message': 'Inicio de sesion exitoso'}), 201
+    else:
+        return jsonify({'error': 'Credenciales invalidas'}), 401 
+
+@app.route('/check-auth', methods=['GET'])
+def check_auth():
+    if 'user_id' in session:
+        return jsonify({'authenticated': True}), 200
+    else:
+        return jsonify({'authenticated': False}), 200
+
+@app.route('/logout', methods=['POST'])
+def logout_user():
+    session.pop('user_id', None)
+    return jsonify({'message': 'Sesion cerrada con exito.'})
     
 # Se obtienen todos los articulos.
 @app.route('/articles', methods = ['GET'])
@@ -57,17 +74,21 @@ def get_articles():
         'id': article.id,
         'title': article.title,
         'content': article.content,
-        'image_url': article.image_url
+        'image_url': article.image_url,
+        'author': article.author.username,
+        'created_at': article.created_at.strftime('%d-%m-%Y')
     } for article in articles])
 
 # Se crean articulos.
 @app.route('/create-article', methods = ['POST'])
 def create_article():
     data = request.get_json()
+    user_id = session.get('user_id')
     new_article = Article(
         title=data['title'], 
         content=data['content'],
-        image_url=data['image_url']
+        image_url=data['image_url'],
+        user_id=user_id
         )
     db.session.add(new_article)
     db.session.commit()
@@ -76,7 +97,8 @@ def create_article():
         'id': new_article.id,
         'title': new_article.title,
         'content':new_article.content,
-        'image_url': new_article.image_url
+        'image_url': new_article.image_url,
+        'author': new_article.author.username
     }), 201
 
 # Se actualizan articulos.

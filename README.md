@@ -25,6 +25,12 @@ API sencilla para administrar artículos y usuarios, con una interfaz web de blo
 - Usar un componente `Card` reutilizable para cada artículo en la Home.
 - Incorporar un diseño visual con logo, buscador y acceso a crear artículo e iniciar sesión.
 - Soportar imágenes por artículo con campo `image_url` en la API y en la vista principal del blog.
+- Gestionar sesiones de usuario con Flask `session`, incluyendo login y comprobación de autenticación.
+- Exponer endpoints de autenticación para verificar si el usuario está autenticado y cerrar sesión.
+- Conectar el frontend con cookies de sesión para mostrar contenido condicional según el estado de autenticación.
+- Mostrar el botón de "Crear Artículo" solo cuando el usuario está autenticado y permitir cerrar sesión desde el navbar.
+- Mostrar información de autor y fecha en cada tarjeta del blog.
+- Añadir interacciones visuales como favoritos y guardados en cada tarjeta de artículo.
 
 ## Requisitos
 
@@ -50,7 +56,9 @@ La API estará disponible en `http://127.0.0.1:5000`. La base de datos SQLite se
 | Método | Ruta | Descripción |
 | --- | --- | --- |
 | `POST` | `/register` | Registra un usuario. |
-| `POST` | `/login` | Inicia sesión. |
+| `POST` | `/login` | Inicia sesión y crea una sesión del usuario. |
+| `GET` | `/check-auth` | Verifica si el usuario está autenticado. |
+| `POST` | `/logout` | Cierra la sesión del usuario. |
 | `GET` | `/articles` | Obtiene todos los artículos. |
 | `POST` | `/create-article` | Crea un artículo. |
 | `GET` | `/article/<id>` | Obtiene un artículo por su identificador. |
@@ -84,14 +92,20 @@ Entre los cambios recientes destacan:
 
 - Branding de DevMoon con paleta oscura, colores personalizados y textos con gradiente.
 - Navbar mejorado con logo, buscador visual, acceso a "Crear Artículo" e "Inicio de Sesión" y uso de iconos de Font Awesome.
+- Navbar con lógica de sesión: si el usuario está autenticado, muestra "Crear Artículo" y "Cerrar Sesión"; si no, muestra "Inicio de Sesión".
 - Home con título principal "Lista de Proyectos" y tarjetas reutilizables para cada artículo, incluyendo imágenes si están disponibles.
+- Tarjetas con autor, fecha, botón de favorito y guardado.
 - Vista de detalle para cada artículo en `/article/[id]` con contenido integrado en una página dedicada.
 - Layout global para mantener una estructura visual consistente en toda la aplicación.
 - Uso de estilos propios con variables de color para la identidad visual del blog.
 
 La navegación dinámica se implementó con rutas del tipo `/article/[id]`, para abrir un contenido específico según el identificador del artículo. Esto permite pasar desde la Home a la vista del detalle sin perder la estructura general de la app.
 
-Además, el modelo de artículo ya incluye un campo `image_url`, y la API devuelve esta propiedad para que la Home pueda renderizar una imagen en cada tarjeta del blog.
+Además, el modelo de artículo ya incluye un campo `image_url`, y la API devuelve esta propiedad para que la Home pueda renderizar una imagen en cada tarjeta del blog. También se incluye la información del autor y la fecha de creación del artículo, para enriquecer la vista general del contenido.
+
+En la parte de autenticación, la API usa sesiones de Flask para identificar al usuario logueado, con rutas para iniciar sesión, comprobar autenticación y cerrar sesión. El frontend consume estas rutas con `credentials: 'include'` para mantener la sesión usando cookies y mostrar opciones condicionales en el navbar.
+
+La parte visual de cada tarjeta incluye interacciones como favorito y guardado, con íconos de Font Awesome para una mejor experiencia en la lista de artículos.
 
 Para iniciarlo, primero asegúrate de que la API Flask esté ejecutándose. Después, abre una terminal en `app-blog/` y ejecuta:
 

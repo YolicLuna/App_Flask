@@ -9,12 +9,13 @@ interface Article{
   title: string;
   content: string;
   image_url: string;
+  author: string;
+  created_at: string;
 }
 
 export default function Home() {
 
   const [articles, setArticles] = useState<Article[]>([])
-  console.log(articles)
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/articles')
@@ -38,6 +39,8 @@ export default function Home() {
               title={article.title}
               content={article.content}
               image_url={article.image_url}
+              author={article.author}
+              created_at={article.created_at}
               />
               ))
             }
