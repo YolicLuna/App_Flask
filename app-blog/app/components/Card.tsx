@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faHeart as fasHeart, faBookmark as fasBookmark } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as farHeart, faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons';
+import { faArrowRight, faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CardProps } from '@/types/article';
+import { useAuth } from '@/context/AuthProvider';
 
 const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, created_at, isFavorite, toggleFavorite }) => {
-  const [isBookmarked, setIsBookmarked] = useState(false);
+      const { isAuthenticated } = useAuth()
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 relative group">
@@ -22,18 +23,8 @@ const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, crea
 
       {/* Botones de interacción */}
       <div className="absolute top-4 right-4 flex space-x-2">
-        <button
-          onClick={() => setIsBookmarked(!isBookmarked)}
-          className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg hover:bg-white transition-all duration-300 group"
-        >
-          <FontAwesomeIcon
-            icon={isBookmarked ? fasBookmark : farBookmark}
-            className={`h-5 w-5 ${
-              isBookmarked ? 'text-devmoon-indigo' : 'text-gray-600'
-            } group-hover:scale-110 transition-all duration-300`}
-          />
-        </button>
-        <button
+        {isAuthenticated && (
+          <button
           onClick={() => toggleFavorite(id)}
           className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg hover:bg-white transition-all duration-300 group"
         >
@@ -44,6 +35,8 @@ const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, crea
             } group-hover:scale-110 transition-all duration-300`}
           />
         </button>
+        )
+        }
       </div>
 
       {/* Contenido */}

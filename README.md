@@ -1,6 +1,6 @@
 # DevMoon Blog
 
-API sencilla para administrar artículos y usuarios, con una interfaz web de blog desarrollada en Next.js. El proyecto combina Flask y SQLite en el backend, y una experiencia visual moderna con branding personalizado en el frontend.
+Blog con una API para administrar artículos y usuarios, y una interfaz web para explorar publicaciones. El backend usa Flask y SQLite; el frontend está construido con React y Next.js.
 
 ![Python](https://img.shields.io/badge/Python-Programming-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-API-black.svg)
@@ -11,37 +11,22 @@ API sencilla para administrar artículos y usuarios, con una interfaz web de blo
 
 ## Funciones
 
-- Crear, consultar, actualizar y eliminar artículos.
-- Registrar usuarios e iniciar sesión.
-- Guardar las contraseñas como hashes.
-- Probar las solicitudes con las colecciones de Postman incluidas.
-- Mostrar artículos en la Home con un diseño de tarjetas y soporte para imágenes.
-- Navegar dinámicamente a cada artículo desde su identificador en la ruta `/article/[id]`.
-- Mejorar la navegación visual con un navbar reutilizable y una estructura general de layout.
-- Usar iconos de Font Awesome para mejorar la apariencia del menú y los elementos de navegación.
-- Personalizar la identidad visual con branding de DevMoon, paleta oscura y estilos modernos.
-- Mostrar una lista de proyectos en la Home con diseño tipo blog.
-- Abrir una vista detallada de cada artículo desde la ruta dinámica `/article/[id]`.
-- Usar un componente `Card` reutilizable para cada artículo en la Home.
-- Incorporar un diseño visual con logo, buscador y acceso a crear artículo e iniciar sesión.
-- Soportar imágenes por artículo con campo `image_url` en la API y en la vista principal del blog.
-- Gestionar sesiones de usuario con Flask `session`, incluyendo login y comprobación de autenticación.
-- Exponer endpoints de autenticación para verificar si el usuario está autenticado y cerrar sesión.
-- Conectar el frontend con cookies de sesión para mostrar contenido condicional según el estado de autenticación.
-- Mostrar el botón de "Crear Artículo" solo cuando el usuario está autenticado y permitir cerrar sesión desde el navbar.
-- Mostrar información de autor y fecha en cada tarjeta del blog.
-- Buscar artículos por título o contenido desde el navbar.
-- Actualizar el estado de favorito de un artículo mediante la API.
+- Artículos: crear, consultar, actualizar y eliminar publicaciones con imagen, autor y fecha.
+- Usuarios: registro, inicio y cierre de sesión mediante cookies.
+- Favoritos: actualizar el estado de favorito de un artículo.
+- Interfaz: buscar por título o contenido, explorar tarjetas y abrir el detalle en `/article/[id]`.
+- Navegación: opciones de menú adaptadas al estado de sesión.
 
 ## Requisitos
 
-- Python instalado.
-- `pip` para instalar las dependencias.
-- Node.js y `npm` para ejecutar el frontend.
+- Python y `pip`.
+- Node.js y `npm`.
 
-## Instalación y ejecución
+## Inicio
 
-Desde la carpeta principal del proyecto, ejecuta:
+### API
+
+Desde la carpeta principal, crea el entorno e inicia Flask:
 
 ```powershell
 python -m venv .venv
@@ -50,75 +35,50 @@ pip install -r requirements.txt
 python app.py
 ```
 
-La API estará disponible en `http://127.0.0.1:5000`. La base de datos SQLite se crea al iniciar la aplicación.
+La API queda disponible en `http://127.0.0.1:5000` y crea la base de datos SQLite al iniciar.
 
-## Rutas de la API
+### Frontend
+
+En otra terminal, instala y ejecuta la aplicación web:
+
+```powershell
+cd app-blog
+npm install
+npm install @fortawesome/free-regular-svg-icons
+npm run dev
+```
+
+Abre `http://localhost:3000`. Mantén la API en ejecución para que el frontend pueda cargar los artículos.
+
+## API
 
 | Método | Ruta | Descripción |
 | --- | --- | --- |
 | `POST` | `/register` | Registra un usuario. |
-| `POST` | `/login` | Inicia sesión y crea una sesión del usuario. |
-| `GET` | `/check-auth` | Verifica si el usuario está autenticado. |
-| `POST` | `/logout` | Cierra la sesión del usuario. |
-| `POST` | `/favorites/<id>` | Actualiza el estado de favorito de un artículo. |
-| `GET` | `/articles` | Obtiene todos los artículos. |
-| `POST` | `/create-article` | Crea un artículo. |
-| `GET` | `/article/<id>` | Obtiene un artículo por su identificador. |
+| `POST` | `/login` | Inicia sesión. |
+| `GET` | `/check-auth` | Comprueba la sesión actual. |
+| `POST` | `/logout` | Cierra la sesión. |
+| `GET` | `/articles` | Lista los artículos. |
+| `POST` | `/create-article` | Crea un artículo asociado al usuario con sesión iniciada. |
+| `GET` | `/article/<id>` | Obtiene un artículo por identificador. |
 | `PUT` | `/articles/<id>` | Actualiza un artículo. |
 | `DELETE` | `/articles/<id>` | Elimina un artículo. |
+| `POST` | `/favorites/<id>` | Actualiza el estado de favorito. |
 
-Las solicitudes de registro y de artículos usan JSON. Por ejemplo, para crear un artículo:
+Las solicitudes usan JSON. Ejemplo para crear un artículo:
 
 ```json
 {
-	"title": "Mi artículo",
-	"content": "Contenido del artículo.",
-	"image_url": "https://ejemplo.com/imagen.jpg"
+  "title": "Mi artículo",
+  "content": "Contenido del artículo.",
+  "image_url": "https://ejemplo.com/imagen.jpg"
 }
 ```
 
-Para registrar un usuario, envía `username`, `email` y `password`. Para iniciar sesión, envía `email` y `password`. Inicia sesión antes de crear un artículo para que quede asociado al usuario.
-
 ## Pruebas con Postman
 
-1. Inicia la API y déjala ejecutándose.
-2. Usa las solicitudes de `postman/collections/Auth-1` para registrar un usuario e iniciar sesión.
-3. En `postman/collections/Articles`, prueba la creación, consulta, actualización y eliminación de artículos, además de la solicitud `Favorite`.
+1. Inicia la API.
+2. En `postman/collections/Auth-1`, registra un usuario e inicia sesión.
+3. En `postman/collections/Articles`, prueba las operaciones de artículos y la solicitud `Favorite`.
 
-La solicitud `Favorite` envía `POST /favorites/<id>` con un cuerpo como `{"isFavorite": true}`. Usa el identificador de un artículo existente en la URL. Iniciar sesión antes de crear artículos permite asociarlos al usuario; Postman conserva la cookie de sesión para las solicitudes siguientes.
-
-## Frontend
-
-El frontend está en `app-blog/` y está desarrollado con React y Next.js. La página principal consulta los artículos de la API y los muestra en tarjetas con su título y un fragmento del contenido. También se añadió una estructura visual común con `Layout`, `Navbar` y `Footer`, además de una navegación dinámica para ver cada artículo en su propia vista.
-
-Entre los cambios recientes destacan:
-
-- Branding de DevMoon con paleta oscura, colores personalizados y textos con gradiente.
-- Navbar mejorado con logo, buscador visual, acceso a "Crear Artículo" e "Inicio de Sesión" y uso de iconos de Font Awesome.
-- Navbar con lógica de sesión: si el usuario está autenticado, muestra "Crear Artículo" y "Cerrar Sesión"; si no, muestra "Inicio de Sesión".
-- Búsqueda de artículos por título y contenido.
-- Home con título principal "Lista de Proyectos" y tarjetas reutilizables para cada artículo, incluyendo imágenes si están disponibles.
-- Tarjetas con autor, fecha y controles visuales de favorito y guardado.
-- Vista de detalle para cada artículo en `/article/[id]` con contenido integrado en una página dedicada.
-- Layout global para mantener una estructura visual consistente en toda la aplicación.
-- Uso de estilos propios con variables de color para la identidad visual del blog.
-
-La navegación dinámica se implementó con rutas del tipo `/article/[id]`, para abrir un contenido específico según el identificador del artículo. Esto permite pasar desde la Home a la vista del detalle sin perder la estructura general de la app.
-
-Además, el modelo de artículo ya incluye un campo `image_url`, y la API devuelve esta propiedad para que la Home pueda renderizar una imagen en cada tarjeta del blog. También se incluye la información del autor y la fecha de creación del artículo, para enriquecer la vista general del contenido.
-
-El buscador filtra los artículos por título o contenido. La API también ofrece `POST /favorites/<id>` para actualizar el estado de favorito; la solicitud correspondiente está en la colección `Articles` de Postman.
-
-En la parte de autenticación, la API usa sesiones de Flask para identificar al usuario logueado, con rutas para iniciar sesión, comprobar autenticación y cerrar sesión. El frontend consume estas rutas con `credentials: 'include'` para mantener la sesión usando cookies y mostrar opciones condicionales en el navbar.
-
-La parte visual de cada tarjeta incluye interacciones como favorito y guardado, con íconos de Font Awesome para una mejor experiencia en la lista de artículos.
-
-Para iniciarlo, primero asegúrate de que la API Flask esté ejecutándose. Después, abre una terminal en `app-blog/` y ejecuta:
-
-```powershell
-npm install
-npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons @fortawesome/free-regular-svg-icons
-npm run dev
-```
-
-Luego visita `http://localhost:3000`. Mantén la API Flask en ejecución para que el frontend pueda conectarse a ella.
+`Favorite` envía `POST /favorites/<id>` con un cuerpo como `{"isFavorite": true}`. Reemplaza `<id>` por el identificador de un artículo existente. Mantén la sesión de Postman iniciada para probar la creación de artículos.
