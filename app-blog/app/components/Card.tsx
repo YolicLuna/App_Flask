@@ -3,18 +3,9 @@ import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faHeart as fasHeart, faBookmark as fasBookmark } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as farHeart, faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons';
+import { CardProps } from '@/types/article';
 
-interface CardProps {
-  id: number;
-  title: string;
-  content: string;
-  image_url: string;
-  author: string;
-  created_at: string;
-}
-
-const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, created_at }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, created_at, isFavorite, toggleFavorite }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   return (
@@ -43,7 +34,7 @@ const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, crea
           />
         </button>
         <button
-          onClick={() => setIsFavorite(!isFavorite)}
+          onClick={() => toggleFavorite(id)}
           className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg hover:bg-white transition-all duration-300 group"
         >
           <FontAwesomeIcon

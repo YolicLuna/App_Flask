@@ -11,6 +11,7 @@ class Article(db.Model):
     image_url = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    is_favorite = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
         return f'<Article {self.title}>'

@@ -30,7 +30,8 @@ API sencilla para administrar artículos y usuarios, con una interfaz web de blo
 - Conectar el frontend con cookies de sesión para mostrar contenido condicional según el estado de autenticación.
 - Mostrar el botón de "Crear Artículo" solo cuando el usuario está autenticado y permitir cerrar sesión desde el navbar.
 - Mostrar información de autor y fecha en cada tarjeta del blog.
-- Añadir interacciones visuales como favoritos y guardados en cada tarjeta de artículo.
+- Buscar artículos por título o contenido desde el navbar.
+- Actualizar el estado de favorito de un artículo mediante la API.
 
 ## Requisitos
 
@@ -59,6 +60,7 @@ La API estará disponible en `http://127.0.0.1:5000`. La base de datos SQLite se
 | `POST` | `/login` | Inicia sesión y crea una sesión del usuario. |
 | `GET` | `/check-auth` | Verifica si el usuario está autenticado. |
 | `POST` | `/logout` | Cierra la sesión del usuario. |
+| `POST` | `/favorites/<id>` | Actualiza el estado de favorito de un artículo. |
 | `GET` | `/articles` | Obtiene todos los artículos. |
 | `POST` | `/create-article` | Crea un artículo. |
 | `GET` | `/article/<id>` | Obtiene un artículo por su identificador. |
@@ -70,19 +72,20 @@ Las solicitudes de registro y de artículos usan JSON. Por ejemplo, para crear u
 ```json
 {
 	"title": "Mi artículo",
-	"content": "Contenido del artículo."
+	"content": "Contenido del artículo.",
+	"image_url": "https://ejemplo.com/imagen.jpg"
 }
 ```
 
-Para registrar un usuario, envía `username`, `email` y `password`. Para iniciar sesión, envía `email` y `password`.
+Para registrar un usuario, envía `username`, `email` y `password`. Para iniciar sesión, envía `email` y `password`. Inicia sesión antes de crear un artículo para que quede asociado al usuario.
 
 ## Pruebas con Postman
 
-1. Inicia la API siguiendo los pasos anteriores y déjala ejecutándose.
-2. Abre las solicitudes de `postman/collections` en Postman.
-3. Elige una solicitud y envíala a `http://127.0.0.1:5000`.
+1. Inicia la API y déjala ejecutándose.
+2. Usa las solicitudes de `postman/collections/Auth-1` para registrar un usuario e iniciar sesión.
+3. En `postman/collections/Articles`, prueba la creación, consulta, actualización y eliminación de artículos, además de la solicitud `Favorite`.
 
-La carpeta `Articles` contiene solicitudes para crear, consultar, actualizar y eliminar artículos. La carpeta `Auth-1` contiene solicitudes para registrar usuarios e iniciar sesión. Las solicitudes incluyen ejemplos de los datos JSON necesarios.
+La solicitud `Favorite` envía `POST /favorites/<id>` con un cuerpo como `{"isFavorite": true}`. Usa el identificador de un artículo existente en la URL. Iniciar sesión antes de crear artículos permite asociarlos al usuario; Postman conserva la cookie de sesión para las solicitudes siguientes.
 
 ## Frontend
 
@@ -93,8 +96,9 @@ Entre los cambios recientes destacan:
 - Branding de DevMoon con paleta oscura, colores personalizados y textos con gradiente.
 - Navbar mejorado con logo, buscador visual, acceso a "Crear Artículo" e "Inicio de Sesión" y uso de iconos de Font Awesome.
 - Navbar con lógica de sesión: si el usuario está autenticado, muestra "Crear Artículo" y "Cerrar Sesión"; si no, muestra "Inicio de Sesión".
+- Búsqueda de artículos por título y contenido.
 - Home con título principal "Lista de Proyectos" y tarjetas reutilizables para cada artículo, incluyendo imágenes si están disponibles.
-- Tarjetas con autor, fecha, botón de favorito y guardado.
+- Tarjetas con autor, fecha y controles visuales de favorito y guardado.
 - Vista de detalle para cada artículo en `/article/[id]` con contenido integrado en una página dedicada.
 - Layout global para mantener una estructura visual consistente en toda la aplicación.
 - Uso de estilos propios con variables de color para la identidad visual del blog.
@@ -102,6 +106,8 @@ Entre los cambios recientes destacan:
 La navegación dinámica se implementó con rutas del tipo `/article/[id]`, para abrir un contenido específico según el identificador del artículo. Esto permite pasar desde la Home a la vista del detalle sin perder la estructura general de la app.
 
 Además, el modelo de artículo ya incluye un campo `image_url`, y la API devuelve esta propiedad para que la Home pueda renderizar una imagen en cada tarjeta del blog. También se incluye la información del autor y la fecha de creación del artículo, para enriquecer la vista general del contenido.
+
+El buscador filtra los artículos por título o contenido. La API también ofrece `POST /favorites/<id>` para actualizar el estado de favorito; la solicitud correspondiente está en la colección `Articles` de Postman.
 
 En la parte de autenticación, la API usa sesiones de Flask para identificar al usuario logueado, con rutas para iniciar sesión, comprobar autenticación y cerrar sesión. El frontend consume estas rutas con `credentials: 'include'` para mantener la sesión usando cookies y mostrar opciones condicionales en el navbar.
 
@@ -111,7 +117,7 @@ Para iniciarlo, primero asegúrate de que la API Flask esté ejecutándose. Desp
 
 ```powershell
 npm install
-npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons
+npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons @fortawesome/free-regular-svg-icons
 npm run dev
 ```
 

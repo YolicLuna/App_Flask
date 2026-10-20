@@ -65,6 +65,15 @@ def check_auth():
 def logout_user():
     session.pop('user_id', None)
     return jsonify({'message': 'Sesion cerrada con exito.'})
+
+@app.route('/favorites/<int:article_id>', methods=['POST'])
+def toggle_favorite(article_id):
+    data = request.get_json()
+    is_favorite = data.get('isFavorite')
+    article = Article.query.get_or_404(article_id)
+    article.is_favorite = is_favorite
+    db.session.commit()
+    return jsonify({'message': 'Estado de favoritos Actuaizado.'}), 201
     
 # Se obtienen todos los articulos.
 @app.route('/articles', methods = ['GET'])

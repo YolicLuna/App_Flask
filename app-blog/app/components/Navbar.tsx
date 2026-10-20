@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import { faSearch, faPlusCircle, faSignInAlt } from "@fortawesome/free-solid-svg-icons";
+import { faPlusCircle, faSignInAlt } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import SearchBar from "./SearchBar";
+import { Article } from "@/types/article";
 
-const Navbar = () => {
+interface NavbarProps {
+    articles: Article[];
+    setFilteredArticles?: (articles: Article[]) => void
+}
+
+const Navbar: React.FC<NavbarProps> = ({articles, setFilteredArticles}) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     console.log(isAuthenticated)
@@ -49,19 +56,10 @@ const Navbar = () => {
                         DevMoon
                     </span>
                 </a>
-                <div className="flex-grow">
-                <div className="relative max-w-md mx-auto">
-                    <div className="relative">
-                    <FontAwesomeIcon icon={faSearch} className="text-white absolute left-3 top-3 h-5 w-5 ml-3" />
-                        <input 
-                        type="text"
-                        placeholder="Buscar articulos..."
-                        className="bg-gray-800 text-white placeholder-gray-500 rounded-full pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-devmoon-indigo"
-                        
-                        />
-                    </div>
-                </div>
-                </div>
+                <SearchBar
+                    articles = {articles}
+                    setFilteredArticles={setFilteredArticles}
+                    />
                 <ul className="flex space-x-6 items-center">
                     {isAuthenticated && (
                         <li>

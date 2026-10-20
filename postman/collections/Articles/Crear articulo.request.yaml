@@ -5,8 +5,8 @@ body:
   type: json
   content: |-
     {
-        "title": "Hotel app",
-        "content": "Aplicacion web para adminitracion de hoteles.",
-        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL5PesOxilS9SO8uz9v7JwTs5paCiv8UAqpj9cIXouQA&s=10"
+        "title": "Restaurant App",
+        "content": "Aplicacion web para administracion de restaurantes.",
+        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2HaBNXATvX6TIcSnbzgfBXzqfxxL8uTVH9ayow1zn0w&s=10"
     }
 order: 1504872324313551
