@@ -14,7 +14,7 @@ Blog con una API para administrar artículos y usuarios, y una interfaz web para
 - Artículos: crear, consultar, actualizar y eliminar publicaciones con imagen, autor y fecha.
 - Usuarios: registro, inicio y cierre de sesión mediante cookies.
 - Favoritos: actualizar el estado de favorito de un artículo.
-- Interfaz: buscar por título o contenido, explorar tarjetas y abrir el detalle en `/article/[id]`.
+- Interfaz: `ArticleProvider` carga y comparte los artículos, el estado de carga y los resultados filtrados; permite buscar por título o contenido, explorar tarjetas y abrir el detalle en `/article/[id]`.
 - Navegación: opciones de menú adaptadas al estado de sesión.
 
 ## Requisitos

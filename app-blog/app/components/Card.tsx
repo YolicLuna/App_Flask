@@ -5,17 +5,22 @@ import { faArrowRight, faHeart as fasHeart } from '@fortawesome/free-solid-svg-i
 import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CardProps } from '@/types/article';
 import { useAuth } from '@/context/AuthProvider';
+import { useArticles } from '@/context/ArticleProvider';
 
-const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, created_at, isFavorite, toggleFavorite }) => {
+const Card: React.FC<CardProps> = ({id}) => {
       const { isAuthenticated } = useAuth()
+      const {articles, toggleFavorite} = useArticles()
+      const article = articles.find(article => article.id === id)
+      
+      if (!article) return null
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 relative group">
       {/* Imagen con overlay gradiente */}
       <div className="relative overflow-hidden h-64">
         <img 
-          src={image_url} 
-          alt={title} 
+          src={article.image_url} 
+          alt={article.title} 
           className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105" 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
@@ -29,9 +34,9 @@ const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, crea
           className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg hover:bg-white transition-all duration-300 group"
         >
           <FontAwesomeIcon
-            icon={isFavorite ? fasHeart : farHeart}
+            icon={article.isFavorite ? fasHeart : farHeart}
             className={`h-5 w-5 ${
-              isFavorite ? 'text-red-500' : 'text-gray-600'
+              article.isFavorite ? 'text-red-500' : 'text-gray-600'
             } group-hover:scale-110 transition-all duration-300`}
           />
         </button>
@@ -48,10 +53,10 @@ const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, crea
 
         {/* Título y contenido */}
         <h2 className="text-2xl font-bold text-gray-800 mb-3 hover:text-devmoon-indigo transition-colors duration-300">
-          {title}
+          {article.title}
         </h2>
         <p className="text-gray-600 leading-relaxed mb-6">
-          {content.length > 150 ? `${content.slice(0, 150)}...` : content}
+          {article.content.length > 150 ? `${article.content.slice(0, 150)}...` : article.content}
         </p>
 
         {/* Footer con metadata y botón de leer más */}
@@ -63,8 +68,8 @@ const Card: React.FC<CardProps> = ({ id, title, content, image_url, author, crea
               className="w-10 h-10 rounded-full object-cover"
             />
             <div>
-              <p className="text-sm font-medium text-gray-900">{author}</p>
-              <p className="text-xs text-gray-500">{created_at}</p>
+              <p className="text-sm font-medium text-gray-900">{article.author}</p>
+              <p className="text-xs text-gray-500">{article.created_at}</p>
             </div>
           </div>
 
