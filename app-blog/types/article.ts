@@ -12,6 +12,7 @@ export interface ArticleContextType {
   articles: Article[];
   filteredArticles: Article[];
   setFilteredArticles: React.Dispatch<React.SetStateAction<Article[]>>;
+  fetchArticleById: (id: number) => Promise<Article | null>;
   toggleFavorite: (id: number) => void;
   loading: boolean;
 }

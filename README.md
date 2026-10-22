@@ -1,7 +1,5 @@
 # DevMoon Blog
 
-Blog con una API para administrar artículos y usuarios, y una interfaz web para explorar publicaciones. El backend usa Flask y SQLite; el frontend está construido con React y Next.js.
-
 ![Python](https://img.shields.io/badge/Python-Programming-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-API-black.svg)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-003B57.svg)
@@ -9,12 +7,18 @@ Blog con una API para administrar artículos y usuarios, y una interfaz web para
 ![Next.js](https://img.shields.io/badge/Next.js-Framework-black.svg)
 ![Postman](https://img.shields.io/badge/Postman-API%20Testing-FF6C37?logo=postman&logoColor=white)
 
+## Sobre el proyecto
+
+DevMoon Blog es un espacio para compartir y explorar artículos y proyectos. La interfaz permite descubrir publicaciones y consultar sus detalles, mientras que el sistema también ofrece registro e inicio de sesión.
+
+La App esta construida con Flask (Python) gestionar las operaciones del sitio, SQLite para conservar la información, React con Next.js permite construir la interfaz web y Postman se utiliza para probar las solicitudes de la API.
+
 ## Funciones
 
 - Artículos: crear, consultar, actualizar y eliminar publicaciones con imagen, autor y fecha.
 - Usuarios: registro, inicio y cierre de sesión mediante cookies.
 - Favoritos: actualizar el estado de favorito de un artículo.
-- Interfaz: `ArticleProvider` carga y comparte los artículos, el estado de carga y los resultados filtrados; permite buscar por título o contenido, explorar tarjetas y abrir el detalle en `/article/[id]`.
+- Interfaz: `ArticleProvider` comparte los artículos, filtros y estado de carga. El detalle en `/article/[id]` reutiliza un artículo ya cargado o lo consulta por ID, y muestra su imagen, autor y fecha.
 - Navegación: opciones de menú adaptadas al estado de sesión.
 
 ## Requisitos
