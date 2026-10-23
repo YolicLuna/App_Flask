@@ -9,16 +9,16 @@
 
 ## Sobre el proyecto
 
-DevMoon Blog es un espacio para compartir y explorar artículos y proyectos. La interfaz permite descubrir publicaciones y consultar sus detalles, mientras que el sistema también ofrece registro e inicio de sesión.
+DevMoon Blog permite compartir y explorar artículos y proyectos. Los visitantes pueden buscar publicaciones y consultar sus detalles; el sistema también permite crear cuentas e iniciar sesión.
 
-La App esta construida con Flask (Python) gestionar las operaciones del sitio, SQLite para conservar la información, React con Next.js permite construir la interfaz web y Postman se utiliza para probar las solicitudes de la API.
+Flask (Python) gestiona las operaciones del sitio, SQLite guarda la información, React con Next.js presenta la interfaz web y Postman ayuda a probar la API.
 
 ## Funciones
 
-- Artículos: crear, consultar, actualizar y eliminar publicaciones con imagen, autor y fecha.
-- Usuarios: registro, inicio y cierre de sesión mediante cookies.
+- Artículos: la API permite crear, consultar, actualizar y eliminar publicaciones con imagen, autor y fecha. Home incluye un modal con campos para el título, el contenido y la imagen.
+- Usuarios: registro, inicio y cierre de sesión mediante cookies; `AuthProvider` comparte el estado de sesión en la interfaz.
 - Favoritos: actualizar el estado de favorito de un artículo.
-- Interfaz: `ArticleProvider` comparte los artículos, filtros y estado de carga. El detalle en `/article/[id]` reutiliza un artículo ya cargado o lo consulta por ID, y muestra su imagen, autor y fecha.
+- Interfaz: `ArticleProvider` comparte los artículos, filtros y estado de carga, y gestiona el envío de nuevos artículos. El detalle en `/article/[id]` reutiliza un artículo ya cargado o lo consulta por ID, y muestra su imagen, autor y fecha.
 - Navegación: opciones de menú adaptadas al estado de sesión.
 
 ## Requisitos

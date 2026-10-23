@@ -5,13 +5,14 @@ import { useArticles } from "@/context/ArticleProvider";
 
 interface LayoutProps {
     children: React.ReactNode;
+    onOpenCreateModal: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({children}) => {
+const Layout: React.FC<LayoutProps> = ({children, onOpenCreateModal}) => {
     const { articles, setFilteredArticles} = useArticles()
     return (
         <div className="flex flex-col min-h-screen">
-            <Navbar articles={articles} setFilteredArticles={setFilteredArticles}/>
+            <Navbar articles={articles} setFilteredArticles={setFilteredArticles} onOpenCreateModal={onOpenCreateModal}/>
             <main className="flex-grow">
                 {children}
             </main>

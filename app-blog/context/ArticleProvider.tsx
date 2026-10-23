@@ -41,6 +41,29 @@ export const ArticleProvider: React.FC<{children: React.ReactNode}> = ({children
         }
     }
 
+    const createdArticle = async (newArticle: Partial<Article>): Promise<{success:boolean, message:string}> => {
+        try {
+            const response = await fetch ('HTTP://localhost:5000/articles', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(newArticle)
+            })
+            if (response.ok) {
+                const createdArticle = await response.json()
+                setArticles(prev => [...prev, createdArticle])
+                return{
+                    success: true,
+                    message: 'Articulo creado con exito.'
+                }}else{
+                    return {success: false, message: 'Error al crear el articulo.'
+                }
+            }
+        } catch (error) {
+            console.error('Error en la solicitud', error)
+            return {success: false, message: 'Error en la solicitud.'}
+        }
+    }
+
     const toggleFavorite = (id: number) => {
         setArticles(
           prevArticles => prevArticles.map( article =>
@@ -62,7 +85,7 @@ export const ArticleProvider: React.FC<{children: React.ReactNode}> = ({children
         .catch(error=> console.error('Error al actualizar el favorito.', error))
       }
       return (
-        <ArticleContext.Provider value={{articles, filteredArticles, setFilteredArticles, toggleFavorite, loading, fetchArticleById}}>
+        <ArticleContext.Provider value={{articles, filteredArticles, setFilteredArticles, toggleFavorite, loading, fetchArticleById, createdArticle}}>
             {children}
         </ArticleContext.Provider>
       )

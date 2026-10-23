@@ -15,6 +15,7 @@ export interface ArticleContextType {
   fetchArticleById: (id: number) => Promise<Article | null>;
   toggleFavorite: (id: number) => void;
   loading: boolean;
+  createdArticle: (newArticle: Partial<Article>) => Promise<{success: boolean, message: string}>
 }
 
 export interface CardProps {

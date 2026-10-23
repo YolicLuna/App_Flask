@@ -4,6 +4,8 @@ import Layout from "./components/Layout";
 import Card from "./components/Card";
 import { AuthProvider } from "@/context/AuthProvider";
 import { ArticleProvider, useArticles } from "@/context/ArticleProvider";
+import { useState } from "react";
+import { CreateArticleModal } from "./components/CreateArticleModal";
 
 export default function Home() {
   return (
@@ -16,10 +18,13 @@ export default function Home() {
 }
 
 function HomeContent() {
-  const {filteredArticles, loading} = useArticles()
+  const {filteredArticles, loading, createdArticle} = useArticles()
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const handleOpenModal = () => setIsModalOpen(true)
+    const handleCloseModal = () => setIsModalOpen(false)
   if (loading) return <p>Cargando articulos...</p>
   return (
-      <Layout>
+      <Layout onOpenCreateModal = {handleOpenModal}>
         <div className="container mx-auto py-10">
           <h1 className="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-devmoon-indigo to-devmoon-accent bg-clip-text text-transparent">Lista de Proyectos</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -32,6 +37,7 @@ function HomeContent() {
               ))
             }
           </div>
+          {isModalOpen && <CreateArticleModal onClose={handleCloseModal} onSubmit={createdArticle} />}
         </div>
       </Layout>
   );
