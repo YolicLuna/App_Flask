@@ -9,9 +9,10 @@ import { Article } from "@/types/article";
 interface NavbarProps {
     articles: Article[];
     setFilteredArticles?: (articles: Article[]) => void
+    onOpenCreateModal: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({articles, setFilteredArticles}) => {
+const Navbar: React.FC<NavbarProps> = ({articles, setFilteredArticles, onOpenCreateModal}) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     console.log(isAuthenticated)
@@ -63,10 +64,10 @@ const Navbar: React.FC<NavbarProps> = ({articles, setFilteredArticles}) => {
                 <ul className="flex space-x-6 items-center">
                     {isAuthenticated && (
                         <li>
-                            <Link href="/create" className="flex items-center hover:text-devmoon-accent transition-colors">
+                            <button onClick={onOpenCreateModal} className="flex items-center hover:text-devmoon-accent transition-colors">
                                 <FontAwesomeIcon icon={faPlusCircle} className="mr-2 h-6 w-6" />
                                 Crear Articulo
-                            </Link>
+                            </button>
                         </li>
                     )}
                     {!isAuthenticated ? (
