@@ -11,7 +11,7 @@ supports_credentials=True,
 origins=['http://localhost:3000'],
 allow_headers=['Content-Type'],
 expose_headers=['Set-Cookie'],
-methods=['GET', 'POST', 'OPTIONS']
+methods=['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE']
 )
 
 app.secret_key = 'Moon159'

@@ -18,7 +18,7 @@ export default function Home() {
 }
 
 function HomeContent() {
-  const {filteredArticles, loading, createdArticle} = useArticles()
+  const {filteredArticles, loading, createdArticle, deleteArticle} = useArticles()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const handleOpenModal = () => setIsModalOpen(true)
     const handleCloseModal = () => setIsModalOpen(false)
@@ -31,6 +31,7 @@ function HomeContent() {
             {
               filteredArticles.map((article)=> (
               <Card
+              deleteArticle={deleteArticle}
               key={article.id}
               id={article.id}
               />

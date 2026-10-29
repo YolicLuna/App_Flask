@@ -7,7 +7,7 @@ import { CardProps } from '@/types/article';
 import { useAuth } from '@/context/AuthProvider';
 import { useArticles } from '@/context/ArticleProvider';
 
-const Card: React.FC<CardProps> = ({id}) => {
+const Card: React.FC<CardProps> = ({id, deleteArticle}) => {
       const { isAuthenticated } = useAuth()
       const {articles, toggleFavorite} = useArticles()
       const article = articles.find(article => article.id === id)
@@ -58,7 +58,15 @@ const Card: React.FC<CardProps> = ({id}) => {
         <p className="text-gray-600 leading-relaxed mb-6">
           {article.content.length > 150 ? `${article.content.slice(0, 150)}...` : article.content}
         </p>
-
+        {isAuthenticated && (
+          <button 
+          type="button"
+          onClick={()=> deleteArticle(article.id)}
+          className='text-red-500 hover:text-red-700 text-sm font-medium mb-4'
+          >
+            Eliminar
+            </button>
+        )}
         {/* Footer con metadata y botón de leer más */}
         <div className="flex items-center justify-between mt-6 border-t border-gray-100 pt-4">
           <div className="flex items-center space-x-4">

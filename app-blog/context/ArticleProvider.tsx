@@ -41,10 +41,27 @@ export const ArticleProvider: React.FC<{children: React.ReactNode}> = ({children
         }
     }
 
+    const deleteArticle = async (id: number) => {
+        try {
+            const response = await fetch(`http://localhost:5000/articles/${id}`,{
+                method: 'DELETE',
+                headers: {'Content-type': 'application/json'},
+                credentials: 'include'
+            })
+            if (!response.ok) {
+                throw new Error('Huebo un error al eliminar un articulo.')
+            }
+            setArticles(prev => prev.filter(article => article.id !== id))
+        } catch (error) {
+            console.log('Error al eliminar el articulo', error)
+        }
+    }
+
     const createdArticle = async (newArticle: Partial<Article>): Promise<{success:boolean, message:string}> => {
         try {
-            const response = await fetch ('HTTP://localhost:5000/articles', {
+            const response = await fetch ('http://localhost:5000/create-article', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(newArticle)
             })
@@ -80,12 +97,13 @@ export const ArticleProvider: React.FC<{children: React.ReactNode}> = ({children
         fetch(`http://localhost/favorites/${id}`,{
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
+          credentials: 'include',
           body: JSON.stringify({isFavorite: updateArticle ? ! updateArticle.isFavorite: false})
         })
         .catch(error=> console.error('Error al actualizar el favorito.', error))
       }
       return (
-        <ArticleContext.Provider value={{articles, filteredArticles, setFilteredArticles, toggleFavorite, loading, fetchArticleById, createdArticle}}>
+        <ArticleContext.Provider value={{articles, filteredArticles, setFilteredArticles, toggleFavorite, loading, fetchArticleById, createdArticle, deleteArticle}}>
             {children}
         </ArticleContext.Provider>
       )

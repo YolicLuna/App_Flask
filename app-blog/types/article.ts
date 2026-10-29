@@ -16,8 +16,10 @@ export interface ArticleContextType {
   toggleFavorite: (id: number) => void;
   loading: boolean;
   createdArticle: (newArticle: Partial<Article>) => Promise<{success: boolean, message: string}>
+  deleteArticle: (id: number) => Promise<void>
 }
 
 export interface CardProps {
   id: number;
+  deleteArticle: (id: number) => Promise<void>
 }
