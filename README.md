@@ -15,10 +15,11 @@ Flask (Python) gestiona las operaciones del sitio, SQLite guarda la información
 
 ## Funciones
 
-- Artículos: la API permite crear, consultar, actualizar y eliminar publicaciones con imagen, autor y fecha. Home incluye un modal con campos para el título, el contenido y la imagen.
+- Artículos: la API permite crear, consultar, actualizar y eliminar publicaciones con imagen, autor y fecha. En Inicio, los usuarios con sesión iniciada pueden crear artículos desde un modal y eliminar publicaciones desde sus tarjetas.
 - Usuarios: registro, inicio y cierre de sesión mediante cookies; `AuthProvider` comparte el estado de sesión en la interfaz.
-- Favoritos: actualizar el estado de favorito de un artículo.
-- Interfaz: `ArticleProvider` comparte los artículos, filtros y estado de carga, y gestiona el envío de nuevos artículos. El detalle en `/article/[id]` reutiliza un artículo ya cargado o lo consulta por ID, y muestra su imagen, autor y fecha.
+- Búsqueda: filtra las publicaciones por coincidencias en el título o el contenido.
+- Favoritos: cada usuario con sesión iniciada puede marcar o desmarcar artículos y consultar su propia lista desde la navegación.
+- Interfaz: `ArticleProvider` comparte el catálogo, los resultados filtrados y los favoritos, y gestiona la creación, eliminación y consulta de publicaciones. El detalle en `/article/[id]` reutiliza un artículo ya cargado o lo consulta por ID, y muestra su imagen, autor, fecha y contenido completo.
 - Navegación: opciones de menú adaptadas al estado de sesión.
 
 ## Requisitos
@@ -63,6 +64,7 @@ Abre `http://localhost:3000`. Mantén la API en ejecución para que el frontend 
 | `GET` | `/check-auth` | Comprueba la sesión actual. |
 | `POST` | `/logout` | Cierra la sesión. |
 | `GET` | `/articles` | Lista los artículos. |
+| `GET` | `/favorites` | Lista los artículos favoritos del usuario autenticado. |
 | `POST` | `/create-article` | Crea un artículo asociado al usuario con sesión iniciada. |
 | `GET` | `/article/<id>` | Obtiene un artículo por identificador. |
 | `PUT` | `/articles/<id>` | Actualiza un artículo. |
@@ -86,3 +88,5 @@ Las solicitudes usan JSON. Ejemplo para crear un artículo:
 3. En `postman/collections/Articles`, prueba las operaciones de artículos y la solicitud `Favorite`.
 
 `Favorite` envía `POST /favorites/<id>` con un cuerpo como `{"isFavorite": true}`. Reemplaza `<id>` por el identificador de un artículo existente. Mantén la sesión de Postman iniciada para probar la creación de artículos.
+
+Los favoritos nuevos se guardan por usuario en una tabla de relación. `db.create_all()` crea esa tabla al iniciar la API.

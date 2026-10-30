@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthProvider";
 
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const router = useRouter()
+    const {login} = useAuth()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,6 +22,7 @@ const Login = () => {
             body: JSON.stringify({email, password})
         })
         if (response.ok) {
+            login()
             router.push('/')
         } else {
             const data = await response.json()

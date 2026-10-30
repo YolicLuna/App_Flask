@@ -13,10 +13,14 @@ export interface ArticleContextType {
   filteredArticles: Article[];
   setFilteredArticles: React.Dispatch<React.SetStateAction<Article[]>>;
   fetchArticleById: (id: number) => Promise<Article | null>;
-  toggleFavorite: (id: number) => void;
+  toggleFavorite: (id: number) => Promise<void>;
   loading: boolean;
   createdArticle: (newArticle: Partial<Article>) => Promise<{success: boolean, message: string}>
   deleteArticle: (id: number) => Promise<void>
+  fetchFavorites: () => Promise<void>;
+  showAllArticles: () => void;
+  displayArticles: Article[];
+  isShowingFavorites: boolean;
 }
 
 export interface CardProps {

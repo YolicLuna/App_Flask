@@ -1,7 +1,12 @@
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 from Models import db
+
+favorite_articles = db.Table(
+    'favorite_articles',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('article_id', db.Integer, db.ForeignKey('article.id'), primary_key=True)
+)
 
 # Modelo
 class Article(db.Model):
@@ -11,7 +16,12 @@ class Article(db.Model):
     image_url = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    is_favorite = db.Column(db.Boolean, default=False, nullable=False)
+    legacy_is_favorite = db.Column('is_favorite', db.Boolean, default=False, nullable=False)
+    favorited_by = db.relationship(
+        'User',
+        secondary=favorite_articles,
+        back_populates='favorite_articles'
+    )
 
     def __repr__(self):
         return f'<Article {self.title}>'
