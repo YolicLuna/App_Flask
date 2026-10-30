@@ -2,19 +2,12 @@
 
 import Layout from "./components/Layout";
 import Card from "./components/Card";
-import { AuthProvider } from "@/context/AuthProvider";
-import { ArticleProvider, useArticles } from "@/context/ArticleProvider";
+import { useArticles } from "@/context/ArticleProvider";
 import { useState } from "react";
 import { CreateArticleModal } from "./components/CreateArticleModal";
 
 export default function Home() {
-  return (
-    <ArticleProvider>
-      <AuthProvider>
-        <HomeContent/>
-      </AuthProvider>
-    </ArticleProvider>
-  )
+  return <HomeContent/>
 }
 
 function HomeContent() {

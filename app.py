@@ -66,33 +66,76 @@ def logout_user():
     session.pop('user_id', None)
     return jsonify({'message': 'Sesion cerrada con exito.'})
 
-@app.route('/favorites/<int:article_id>', methods=['POST'])
-def toggle_favorite(article_id):
-    data = request.get_json()
-    is_favorite = data.get('isFavorite')
-    article = Article.query.get_or_404(article_id)
-    article.is_favorite = is_favorite
-    db.session.commit()
-    return jsonify({'message': 'Estado de favoritos Actuaizado.'}), 201
-    
-# Se obtienen todos los articulos.
-@app.route('/articles', methods = ['GET'])
-def get_articles():
-    articles = Article.query.all()
-    return jsonify([{
+def serialize_article(article, is_favorite=False):
+    return {
         'id': article.id,
         'title': article.title,
         'content': article.content,
         'image_url': article.image_url,
         'author': article.author.username,
-        'created_at': article.created_at.strftime('%d-%m-%Y')
-    } for article in articles])
+        'created_at': article.created_at.strftime('%d-%m-%Y'),
+        'isFavorite': is_favorite
+    }
+
+@app.route('/favorites/<int:article_id>', methods=['POST'])
+def toggle_favorite(article_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'Debes iniciar sesion para guardar favoritos.'}), 401
+
+    data = request.get_json(silent=True) or {}
+    is_favorite = data.get('isFavorite')
+    if not isinstance(is_favorite, bool):
+        return jsonify({'error': 'isFavorite debe ser true o false.'}), 400
+
+    user = db.session.get(User, user_id)
+    if user is None:
+        return jsonify({'error': 'La sesion no corresponde a un usuario valido.'}), 401
+
+    article = Article.query.get_or_404(article_id)
+    if is_favorite and article not in user.favorite_articles:
+        user.favorite_articles.append(article)
+    elif not is_favorite and article in user.favorite_articles:
+        user.favorite_articles.remove(article)
+
+    db.session.commit()
+    return jsonify({
+        'message': 'Favorito actualizado.',
+        'isFavorite': is_favorite
+    }), 200
+
+@app.route('/favorites', methods=['GET'])
+def get_favorites():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'Debes iniciar sesion para ver tus favoritos.'}), 401
+    user = db.session.get(User, user_id)
+    if user is None:
+        return jsonify({'error': 'La sesion no corresponde a un usuario valido.'}), 401
+    return jsonify([
+        serialize_article(article, is_favorite=True)
+        for article in user.favorite_articles
+    ]), 200
+    
+# Se obtienen todos los articulos.
+@app.route('/articles', methods = ['GET'])
+def get_articles():
+    articles = Article.query.all()
+    user_id = session.get('user_id')
+    user = db.session.get(User, user_id) if user_id else None
+    favorite_ids = {article.id for article in user.favorite_articles} if user else set()
+    return jsonify([
+        serialize_article(article, article.id in favorite_ids)
+        for article in articles
+    ])
 
 # Se crean articulos.
 @app.route('/create-article', methods = ['POST'])
 def create_article():
     data = request.get_json()
     user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'el usuario no esta autenticado o el ID de usuario no esta en la sesion'}), 401
     new_article = Article(
         title=data['title'], 
         content=data['content'],
@@ -102,13 +145,7 @@ def create_article():
     db.session.add(new_article)
     db.session.commit()
 
-    return jsonify({
-        'id': new_article.id,
-        'title': new_article.title,
-        'content':new_article.content,
-        'image_url': new_article.image_url,
-        'author': new_article.author.username
-    }), 201
+    return jsonify(serialize_article(new_article)), 201
 
 # Se actualizan articulos.
 @app.route('/articles/<int:id>', methods=['PUT'])

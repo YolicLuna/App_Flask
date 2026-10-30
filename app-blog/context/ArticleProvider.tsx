@@ -1,30 +1,43 @@
 'use client';
 import { Article, ArticleContextType } from "@/types/article";
+import { useAuth } from "@/context/AuthProvider";
 import React, {createContext, useContext, useState, useEffect} from "react";
 
 const ArticleContext = createContext<ArticleContextType | undefined >(undefined);
 
 
 export const ArticleProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
+    const {isAuthenticated, loading: authLoading} = useAuth()
     const [articles, setArticles] = useState<Article[]>([])
+    const [favorites, setFavorites] = useState<Article[]>([])
     const [filteredArticles, setFilteredArticles] = useState<Article[]>([])
+    const [isShowingFavorites, setIsShowingFavorites] = useState(false)
     const [loading, setLoading] = useState(true)
+    const displayArticles = isShowingFavorites ? favorites : articles
 
     useEffect(() => {
+        if (authLoading) return
+
         const fetchArticle = async () => {
+            setLoading(true)
             try{
-                const response = await fetch('http://localhost:5000/articles');
+                const response = await fetch('http://localhost:5000/articles', {
+                    credentials: 'include'
+                });
+                if (!response.ok) throw new Error(`No se pudieron cargar los articulos (${response.status}).`)
                 const data = await response.json();
                 setArticles(data)
+                setFavorites(data.filter((article: Article) => article.isFavorite))
                 setFilteredArticles(data)
+                setIsShowingFavorites(false)
             } catch (error) {
-                console.log('Error al obtener los articulos', error)
+                console.error('Error al obtener los articulos', error)
             } finally {
                 setLoading(false)
             }
         }
         fetchArticle()        
-    }, [])
+    }, [isAuthenticated, authLoading])
 
     const fetchArticleById = async (id: number): Promise <Article | null> => {
         const existingArticle = articles.find(article => article.id === id);
@@ -41,6 +54,33 @@ export const ArticleProvider: React.FC<{children: React.ReactNode}> = ({children
         }
     }
 
+    const fetchFavorites = async() => {
+        try {
+            const response = await fetch('http://localhost:5000/favorites', {
+                method: 'GET',
+                 headers: {'Content-Type': 'application/json'},
+                credentials: 'include'
+            })
+            if(!response.ok) throw new Error('Fallo la conexion a favoritos')
+            const favoriteArticles: Article[] = await response.json()
+            const favoriteIds = new Set(favoriteArticles.map(article => article.id))
+            setFavorites(favoriteArticles)
+            setArticles(previous => previous.map(article => ({
+                ...article,
+                isFavorite: favoriteIds.has(article.id)
+            })))
+            setFilteredArticles(favoriteArticles)
+            setIsShowingFavorites(true)
+        } catch (error) {
+            console.error('Error al hacer fetching de favorites', error)
+        }
+    }
+
+    const showAllArticles = () => {
+        setIsShowingFavorites(false)
+        setFilteredArticles(articles)
+    }
+
     const deleteArticle = async (id: number) => {
         try {
             const response = await fetch(`http://localhost:5000/articles/${id}`,{
@@ -52,6 +92,8 @@ export const ArticleProvider: React.FC<{children: React.ReactNode}> = ({children
                 throw new Error('Huebo un error al eliminar un articulo.')
             }
             setArticles(prev => prev.filter(article => article.id !== id))
+            setFavorites(prev => prev.filter(article => article.id !== id))
+            setFilteredArticles(prev => prev.filter(article => article.id !== id))
         } catch (error) {
             console.log('Error al eliminar el articulo', error)
         }
@@ -81,29 +123,39 @@ export const ArticleProvider: React.FC<{children: React.ReactNode}> = ({children
         }
     }
 
-    const toggleFavorite = (id: number) => {
-        setArticles(
-          prevArticles => prevArticles.map( article =>
-            article.id === id
-            ? {
-              ...article,
-              isFavorite: !article.isFavorite
-            }
-            : article
-          )
-        )
-        const updateArticle = articles.find(article => article.id === id)
+    const toggleFavorite = async (id: number) => {
+        const article = articles.find(item => item.id === id)
+        if (!article) {
+            console.error(`No se encontro el articulo ${id} para actualizar su favorito.`)
+            return
+        }
 
-        fetch(`http://localhost/favorites/${id}`,{
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          credentials: 'include',
-          body: JSON.stringify({isFavorite: updateArticle ? ! updateArticle.isFavorite: false})
-        })
-        .catch(error=> console.error('Error al actualizar el favorito.', error))
+        const isFavorite = !article.isFavorite
+        try {
+            const response = await fetch(`http://localhost:5000/favorites/${id}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                credentials: 'include',
+                body: JSON.stringify({isFavorite})
+            })
+            if (!response.ok) {
+                throw new Error(`No se pudo actualizar el favorito (${response.status}).`)
+            }
+
+            const updatedArticle = {...article, isFavorite}
+            setArticles(previous => previous.map(item =>
+                item.id === id ? updatedArticle : item
+            ))
+            setFavorites(previous => isFavorite
+                ? [...previous.filter(item => item.id !== id), updatedArticle]
+                : previous.filter(item => item.id !== id)
+            )
+        } catch (error) {
+            console.error('Error al actualizar el favorito.', error)
+        }
       }
       return (
-        <ArticleContext.Provider value={{articles, filteredArticles, setFilteredArticles, toggleFavorite, loading, fetchArticleById, createdArticle, deleteArticle}}>
+        <ArticleContext.Provider value={{articles, filteredArticles, setFilteredArticles, displayArticles, isShowingFavorites, showAllArticles, toggleFavorite, loading, fetchFavorites, fetchArticleById, createdArticle, deleteArticle}}>
             {children}
         </ArticleContext.Provider>
       )
