@@ -7,31 +7,53 @@
 ![Next.js](https://img.shields.io/badge/Next.js-Framework-black.svg)
 ![Postman](https://img.shields.io/badge/Postman-API%20Testing-FF6C37?logo=postman&logoColor=white)
 
-## Sobre el proyecto
+Aplicación web para publicar, explorar y guardar artículos y proyectos como favoritos. El proyecto integra una API REST desarrollada con Flask y SQLAlchemy, una base de datos SQLite y una interfaz construida con React y Next.js.
 
-DevMoon Blog permite compartir y explorar artículos y proyectos. Los visitantes pueden buscar publicaciones y consultar sus detalles; el sistema también permite crear cuentas e iniciar sesión.
+---
 
-Flask (Python) gestiona las operaciones del sitio, SQLite guarda la información, React con Next.js presenta la interfaz web y Postman ayuda a probar la API.
+## Descripción General
 
-## Funciones
+DevMoon Blog permite consultar publicaciones, buscar por título o contenido y ver el detalle de cada artículo. Los usuarios pueden registrarse e iniciar sesión para crear publicaciones y administrar su lista personal de favoritos. La interfaz también permite eliminar publicaciones y ofrece una vista dedicada para consultar los favoritos.
 
-- Artículos: la API permite crear, consultar, actualizar y eliminar publicaciones con imagen, autor y fecha. En Inicio, los usuarios con sesión iniciada pueden crear artículos desde un modal y eliminar publicaciones desde sus tarjetas.
-- Usuarios: registro, inicio y cierre de sesión mediante cookies; `AuthProvider` comparte el estado de sesión en la interfaz.
-- Búsqueda: filtra las publicaciones por coincidencias en el título o el contenido.
-- Favoritos: cada usuario con sesión iniciada puede marcar o desmarcar artículos y consultar su propia lista desde la navegación.
-- Interfaz: `ArticleProvider` comparte el catálogo, los resultados filtrados y los favoritos, y gestiona la creación, eliminación y consulta de publicaciones. El detalle en `/article/[id]` reutiliza un artículo ya cargado o lo consulta por ID, y muestra su imagen, autor, fecha y contenido completo.
-- Navegación: opciones de menú adaptadas al estado de sesión.
+### Tecnologías Utilizadas
+
+El backend utiliza Python, Flask y Flask-SQLAlchemy para definir la API y gestionar las operaciones de base de datos. SQLite almacena usuarios, artículos y la relación de favoritos. Werkzeug genera y verifica los hashes de contraseñas, y Flask-CORS permite las solicitudes del frontend con credenciales. La interfaz utiliza React, Next.js y TypeScript; sus estilos están implementados con Tailwind CSS y los iconos con Font Awesome. Postman se utiliza para probar manualmente los endpoints.
+
+### Arquitectura del Proyecto
+
+El backend concentra las rutas y la configuración de Flask en `app.py`. Los modelos de SQLAlchemy están en `Models/`: `User` administra las cuentas y sus publicaciones y favoritos, mientras que `Article` representa las publicaciones y la relación muchos a muchos de favoritos. El frontend Next.js se organiza con páginas para Inicio, inicio de sesión y detalle de artículo, componentes reutilizables, proveedores de contexto para autenticación y artículos, y tipos TypeScript compartidos.
+
+### Modelos de la Base de Datos
+
+El sistema cuenta con dos entidades principales. `User` almacena el nombre de usuario, correo electrónico único y contraseña hasheada. `Article` almacena título, contenido, URL de imagen, autor y fecha de creación. La tabla de asociación `favorite_articles` relaciona usuarios y artículos para guardar favoritos de forma independiente para cada usuario.
+
+### Seguridad y Autenticación
+
+Las contraseñas se guardan usando las funciones de hash de Werkzeug, no en texto plano. Flask mantiene la sesión del usuario mediante una cookie; el frontend incluye credenciales en las solicitudes que necesitan conservarla. La creación de artículos y las operaciones de favoritos requieren una sesión iniciada. La API está configurada para aceptar solicitudes del frontend en `http://localhost:3000`.
+
+### Flujo de Publicación y Favoritos
+
+Un visitante puede consultar y buscar artículos y abrir su detalle. Después de registrarse e iniciar sesión, puede crear una publicación proporcionando título, contenido y URL de imagen. Los artículos se muestran en tarjetas con autor y fecha; desde ellas se puede abrir el detalle, eliminar la publicación o marcarla como favorita. La navegación permite alternar entre el catálogo y los favoritos del usuario autenticado.
+
+### Pruebas de la API
+
+El repositorio incluye solicitudes de Postman para probar el registro, el inicio de sesión y las operaciones de artículos y favoritos. Las pruebas se ejecutan manualmente con la API iniciada; no se incluye una suite de pruebas automatizadas.
+
+---
 
 ## Requisitos
 
 - Python y `pip`.
 - Node.js y `npm`.
+- Postman (opcional, para probar la API).
 
-## Inicio
+---
+
+## Inicio Rápido
 
 ### API
 
-Desde la carpeta principal, crea el entorno e inicia Flask:
+Desde la carpeta raíz del proyecto, crea y activa un entorno virtual, instala las dependencias e inicia Flask:
 
 ```powershell
 python -m venv .venv
@@ -40,11 +62,11 @@ pip install -r requirements.txt
 python app.py
 ```
 
-La API queda disponible en `http://127.0.0.1:5000` y crea la base de datos SQLite al iniciar.
+La API queda disponible en `http://127.0.0.1:5000`. La base de datos SQLite y sus tablas se crean al iniciar la aplicación.
 
 ### Frontend
 
-En otra terminal, instala y ejecuta la aplicación web:
+En otra terminal, instala las dependencias e inicia Next.js:
 
 ```powershell
 cd app-blog
@@ -53,25 +75,65 @@ npm install @fortawesome/free-regular-svg-icons
 npm run dev
 ```
 
-Abre `http://localhost:3000`. Mantén la API en ejecución para que el frontend pueda cargar los artículos.
+Abre `http://localhost:3000`. Mantén la API en ejecución para que el frontend pueda cargar y modificar los artículos.
 
-## API
+---
 
-| Método | Ruta | Descripción |
-| --- | --- | --- |
-| `POST` | `/register` | Registra un usuario. |
-| `POST` | `/login` | Inicia sesión. |
-| `GET` | `/check-auth` | Comprueba la sesión actual. |
-| `POST` | `/logout` | Cierra la sesión. |
-| `GET` | `/articles` | Lista los artículos. |
-| `GET` | `/favorites` | Lista los artículos favoritos del usuario autenticado. |
-| `POST` | `/create-article` | Crea un artículo asociado al usuario con sesión iniciada. |
-| `GET` | `/article/<id>` | Obtiene un artículo por identificador. |
-| `PUT` | `/articles/<id>` | Actualiza un artículo. |
-| `DELETE` | `/articles/<id>` | Elimina un artículo. |
-| `POST` | `/favorites/<id>` | Actualiza el estado de favorito. |
+## Estructura del Proyecto
 
-Las solicitudes usan JSON. Ejemplo para crear un artículo:
+```text
+App_Flask/
+├── app.py                         # Aplicación Flask y endpoints de la API
+├── requirements.txt               # Dependencias de Python
+├── Models/
+│   ├── __init__.py                # Instancia de SQLAlchemy
+│   ├── article.py                 # Modelo de artículos y tabla de favoritos
+│   └── user.py                    # Modelo de usuarios y contraseñas
+├── app-blog/
+│   ├── app/
+│   │   ├── article/[id]/          # Página de detalle de artículo
+│   │   ├── components/             # Tarjetas, navegación, búsqueda y modal
+│   │   ├── login/                  # Página de inicio de sesión
+│   │   ├── layout.tsx              # Layout raíz de Next.js
+│   │   └── page.tsx                # Página de inicio
+│   ├── context/                    # Estado compartido de autenticación y artículos
+│   ├── types/                      # Tipos TypeScript
+│   └── package.json                # Dependencias y scripts del frontend
+└── postman/
+    └── collections/                # Solicitudes de prueba para Auth y Articles
+```
+
+---
+
+## Endpoints Disponibles
+
+### Autenticación
+
+| Método | Ruta | Descripción | Sesión requerida |
+|--------|------|-------------|------------------|
+| POST | `/register` | Registrar un usuario | No |
+| POST | `/login` | Iniciar sesión y crear la sesión | No |
+| GET | `/check-auth` | Consultar si hay una sesión activa | No |
+| POST | `/logout` | Cerrar la sesión actual | No |
+
+### Artículos
+
+| Método | Ruta | Descripción | Sesión requerida |
+|--------|------|-------------|------------------|
+| GET | `/articles` | Listar artículos e indicar si son favoritos para la sesión | No |
+| POST | `/create-article` | Crear un artículo asociado al usuario autenticado | Sí |
+| GET | `/article/<id>` | Obtener un artículo por identificador | No |
+| PUT | `/articles/<id>` | Actualizar el título y contenido de un artículo | No |
+| DELETE | `/articles/<id>` | Eliminar un artículo | No |
+
+### Favoritos
+
+| Método | Ruta | Descripción | Sesión requerida |
+|--------|------|-------------|------------------|
+| GET | `/favorites` | Listar los artículos favoritos del usuario | Sí |
+| POST | `/favorites/<id>` | Marcar o desmarcar un artículo como favorito | Sí |
+
+Las solicitudes para registrar usuarios y crear artículos usan JSON. Ejemplo del cuerpo de una solicitud de creación:
 
 ```json
 {
@@ -81,12 +143,39 @@ Las solicitudes usan JSON. Ejemplo para crear un artículo:
 }
 ```
 
-## Pruebas con Postman
+Para actualizar un favorito, envía `{"isFavorite": true}` o `{"isFavorite": false}` a `POST /favorites/<id>`.
 
-1. Inicia la API.
-2. En `postman/collections/Auth-1`, registra un usuario e inicia sesión.
-3. En `postman/collections/Articles`, prueba las operaciones de artículos y la solicitud `Favorite`.
+---
 
-`Favorite` envía `POST /favorites/<id>` con un cuerpo como `{"isFavorite": true}`. Reemplaza `<id>` por el identificador de un artículo existente. Mantén la sesión de Postman iniciada para probar la creación de artículos.
+## Dependencias Principales
 
-Los favoritos nuevos se guardan por usuario en una tabla de relación. `db.create_all()` crea esa tabla al iniciar la API.
+| Dependencia | Propósito |
+|-------------|-----------|
+| Flask | Framework web para la API |
+| Flask-SQLAlchemy | ORM y administración de la base de datos |
+| Werkzeug | Hash y verificación de contraseñas |
+| Flask-CORS | Solicitudes entre el frontend y la API |
+| Next.js | Framework de la aplicación web |
+| React | Construcción de la interfaz |
+| TypeScript | Tipado estático del frontend |
+| Tailwind CSS | Estilos de la interfaz |
+| Font Awesome | Iconos de la interfaz |
+
+---
+
+## Seguridad
+
+Las contraseñas se almacenan como hashes generados por Werkzeug y la autenticación utiliza sesiones de Flask en cookies, no tokens JWT. La creación de artículos y el acceso y modificación de favoritos validan la sesión. Las rutas de actualización y eliminación de artículos actualmente no requieren autenticación en la API.
+
+---
+
+## Pruebas
+
+Para probar la API con Postman:
+
+1. Inicia el backend siguiendo las instrucciones de Inicio Rápido.
+2. Usa las solicitudes de `postman/collections/Auth-1` para registrar un usuario e iniciar sesión.
+3. Usa las solicitudes de `postman/collections/Articles` para listar, crear, consultar, actualizar o eliminar artículos y cambiar favoritos.
+4. Mantén la sesión de Postman para las solicitudes que requieren autenticación.
+
+La API también se puede probar con `curl` o cualquier cliente HTTP. No hay un comando de pruebas automatizadas configurado en el proyecto.

@@ -6,6 +6,7 @@ import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CardProps } from '@/types/article';
 import { useAuth } from '@/context/AuthProvider';
 import { useArticles } from '@/context/ArticleProvider';
+import Swal from 'sweetalert2';
 
 const Card: React.FC<CardProps> = ({id, deleteArticle}) => {
       const { isAuthenticated } = useAuth()
@@ -13,6 +14,28 @@ const Card: React.FC<CardProps> = ({id, deleteArticle}) => {
       const article = articles.find(article => article.id === id)
       
       if (!article) return null
+
+      const confirmDelete = () => {
+        Swal.fire({
+          title: '¿Estas seguro de realizar esta accion?',
+          text: '¡Esta accion no se podra revertir!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, deseo eliminarlo'
+        }).then((result)=> {{
+        }
+          if(result.isConfirmed){
+            deleteArticle(article.id)
+            Swal.fire({
+              title: 'Eliminado',
+              text: 'El producto ha sido eliminado',
+              icon: 'success'
+            })
+          }
+      })
+      }
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 relative group">
@@ -61,7 +84,7 @@ const Card: React.FC<CardProps> = ({id, deleteArticle}) => {
         {isAuthenticated && (
           <button 
           type="button"
-          onClick={()=> deleteArticle(article.id)}
+          onClick={confirmDelete}
           className='text-red-500 hover:text-red-700 text-sm font-medium mb-4'
           >
             Eliminar
