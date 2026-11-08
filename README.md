@@ -13,15 +13,15 @@ Aplicación web para publicar, explorar y guardar artículos y proyectos como fa
 
 ## Descripción General
 
-DevMoon Blog permite consultar publicaciones, buscar por título o contenido y ver el detalle de cada artículo. Los usuarios pueden registrarse e iniciar sesión para crear publicaciones y administrar su lista personal de favoritos. La interfaz también permite eliminar publicaciones y ofrece una vista dedicada para consultar los favoritos.
+DevMoon Blog permite consultar publicaciones, buscar por título o contenido y ver el detalle de cada artículo. Los usuarios pueden registrarse e iniciar sesión para crear publicaciones y administrar su lista personal de favoritos. Al iniciar sesión, la navegación muestra el nombre del usuario; la interfaz también permite eliminar publicaciones y ofrece una vista dedicada para consultar los favoritos.
 
 ### Tecnologías Utilizadas
 
-El backend utiliza Python, Flask y Flask-SQLAlchemy para definir la API y gestionar las operaciones de base de datos. SQLite almacena usuarios, artículos y la relación de favoritos. Werkzeug genera y verifica los hashes de contraseñas, y Flask-CORS permite las solicitudes del frontend con credenciales. La interfaz utiliza React, Next.js y TypeScript; sus estilos están implementados con Tailwind CSS y los iconos con Font Awesome. Postman se utiliza para probar manualmente los endpoints.
+El backend utiliza Python, Flask y Flask-SQLAlchemy para definir la API y gestionar las operaciones de base de datos. SQLite almacena usuarios, artículos y la relación de favoritos. Werkzeug genera y verifica los hashes de contraseñas, y Flask-CORS permite las solicitudes del frontend con credenciales. La interfaz utiliza React, Next.js y TypeScript; sus estilos están implementados con Tailwind CSS, los iconos con Font Awesome y los diálogos de confirmación con SweetAlert2. Postman se utiliza para probar manualmente los endpoints.
 
 ### Arquitectura del Proyecto
 
-El backend concentra las rutas y la configuración de Flask en `app.py`. Los modelos de SQLAlchemy están en `Models/`: `User` administra las cuentas y sus publicaciones y favoritos, mientras que `Article` representa las publicaciones y la relación muchos a muchos de favoritos. El frontend Next.js se organiza con páginas para Inicio, inicio de sesión y detalle de artículo, componentes reutilizables, proveedores de contexto para autenticación y artículos, y tipos TypeScript compartidos.
+El backend concentra las rutas y la configuración de Flask en `app.py`. Los modelos de SQLAlchemy están en `Models/`: `User` administra las cuentas y sus publicaciones y favoritos, mientras que `Article` representa las publicaciones y la relación muchos a muchos de favoritos. El frontend Next.js se organiza con páginas para Inicio, inicio de sesión y detalle de artículo, componentes reutilizables, proveedores de contexto para autenticación y artículos, y tipos TypeScript compartidos. El proveedor de autenticación consulta la sesión activa y conserva el nombre de usuario para mostrarlo en la navegación.
 
 ### Modelos de la Base de Datos
 
@@ -29,11 +29,11 @@ El sistema cuenta con dos entidades principales. `User` almacena el nombre de us
 
 ### Seguridad y Autenticación
 
-Las contraseñas se guardan usando las funciones de hash de Werkzeug, no en texto plano. Flask mantiene la sesión del usuario mediante una cookie; el frontend incluye credenciales en las solicitudes que necesitan conservarla. La creación de artículos y las operaciones de favoritos requieren una sesión iniciada. La API está configurada para aceptar solicitudes del frontend en `http://localhost:3000`.
+Las contraseñas se guardan usando las funciones de hash de Werkzeug, no en texto plano. Flask mantiene la sesión del usuario mediante una cookie; el frontend incluye credenciales en las solicitudes que necesitan conservarla. El endpoint `/check-auth` valida que el usuario de la sesión siga existiendo y devuelve su nombre cuando la sesión es válida. La creación de artículos y las operaciones de favoritos requieren una sesión iniciada. La API está configurada para aceptar solicitudes del frontend en `http://localhost:3000`.
 
 ### Flujo de Publicación y Favoritos
 
-Un visitante puede consultar y buscar artículos y abrir su detalle. Después de registrarse e iniciar sesión, puede crear una publicación proporcionando título, contenido y URL de imagen. Los artículos se muestran en tarjetas con autor y fecha; desde ellas se puede abrir el detalle, eliminar la publicación o marcarla como favorita. La navegación permite alternar entre el catálogo y los favoritos del usuario autenticado.
+Un visitante puede consultar y buscar artículos y abrir su detalle. Después de registrarse e iniciar sesión, puede crear una publicación proporcionando título, contenido y URL de imagen. Los artículos se muestran en tarjetas con autor y fecha; desde ellas se puede abrir el detalle o marcar la publicación como favorita. La navegación muestra el nombre del usuario autenticado y permite alternar entre el catálogo y sus favoritos. Al seleccionar eliminar, SweetAlert2 muestra un diálogo de confirmación antes de borrar el artículo y una notificación de éxito después de confirmar.
 
 ### Pruebas de la API
 
@@ -113,7 +113,7 @@ App_Flask/
 |--------|------|-------------|------------------|
 | POST | `/register` | Registrar un usuario | No |
 | POST | `/login` | Iniciar sesión y crear la sesión | No |
-| GET | `/check-auth` | Consultar si hay una sesión activa | No |
+| GET | `/check-auth` | Validar la sesión y obtener el nombre del usuario autenticado | No |
 | POST | `/logout` | Cerrar la sesión actual | No |
 
 ### Artículos
@@ -145,6 +145,8 @@ Las solicitudes para registrar usuarios y crear artículos usan JSON. Ejemplo de
 
 Para actualizar un favorito, envía `{"isFavorite": true}` o `{"isFavorite": false}` a `POST /favorites/<id>`.
 
+`GET /check-auth` responde con `{"authenticated": true, "username": "nombre"}` cuando la sesión pertenece a un usuario válido. Si no hay una sesión válida, responde `{"authenticated": false}` con estado HTTP `401`.
+
 ---
 
 ## Dependencias Principales
@@ -160,6 +162,7 @@ Para actualizar un favorito, envía `{"isFavorite": true}` o `{"isFavorite": fal
 | TypeScript | Tipado estático del frontend |
 | Tailwind CSS | Estilos de la interfaz |
 | Font Awesome | Iconos de la interfaz |
+| SweetAlert2 | Diálogo de confirmación y notificación al eliminar artículos |
 
 ---
 

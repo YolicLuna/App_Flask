@@ -56,10 +56,22 @@ def login_user():
 
 @app.route('/check-auth', methods=['GET'])
 def check_auth():
-    if 'user_id' in session:
-        return jsonify({'authenticated': True}), 200
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+        if user:
+            return jsonify({
+                'authenticated': True,
+                'username': user.username
+            }), 200
+        else:
+            return jsonify({
+                'authenticated': False,
+            }), 401
     else:
-        return jsonify({'authenticated': False}), 200
+        return jsonify({
+            'authenticated': False,
+        }), 401
 
 @app.route('/logout', methods=['POST'])
 def logout_user():

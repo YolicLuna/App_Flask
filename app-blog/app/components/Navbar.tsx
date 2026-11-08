@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import { faPlusCircle, faSignInAlt, faStar } from "@fortawesome/free-solid-svg-icons";
+import { faPlusCircle, faSignInAlt, faStar, faUser } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import SearchBar from "./SearchBar";
 import { Article } from "@/types/article";
@@ -17,7 +17,8 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({articles, setFilteredArticles, onOpenCreateModal}) => {
 
     const {fetchFavorites, showAllArticles, isShowingFavorites} = useArticles()
-    const {isAuthenticated, logout} = useAuth()
+    const {isAuthenticated, logout, username} = useAuth()
+    console.log({username: username})
 
     const handleLogout = async () => {
         try {
@@ -52,6 +53,15 @@ const Navbar: React.FC<NavbarProps> = ({articles, setFilteredArticles, onOpenCre
                     {
                     isAuthenticated && (
                     <>
+
+                        {
+                            username && (
+                                <li className="flex items-center">
+                                    <FontAwesomeIcon icon={faUser} className='mr-2 text-lg'/>
+                                    <span className="mr-10 h-6 w-6">{username}</span>
+                                </li>
+                            )
+                        }
                         <li>
                             <button
                                 onClick={isShowingFavorites ? showAllArticles : fetchFavorites}
