@@ -44,34 +44,25 @@ def register_user():
         'message': f'Usuario {new_user.username} registrado con exito.'
     }), 200
 
-@app.route('/login', methods = ['POST'])
+@app.route('/login', methods=['POST'])
 def login_user():
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
     if user and user.check_password(data['password']):
         session['user_id'] = user.id
-        return jsonify({'message': 'Inicio de sesion exitoso'}), 201
-    else:
-        return jsonify({'error': 'Credenciales invalidas'}), 401 
+        return jsonify({'message': 'Inicio de sesion exitoso', 'username': user.username}), 200
+    return jsonify({'error': 'Credenciales invalidas'}), 401 
 
+@app.route('/check-auth', methods=['GET'])
 @app.route('/check-auth', methods=['GET'])
 def check_auth():
     user_id = session.get('user_id')
     if user_id:
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if user:
-            return jsonify({
-                'authenticated': True,
-                'username': user.username
-            }), 200
-        else:
-            return jsonify({
-                'authenticated': False,
-            }), 401
-    else:
-        return jsonify({
-            'authenticated': False,
-        }), 401
+            return jsonify({'authenticated': True, 'username': user.username}), 200
+    return jsonify({'authenticated': False, 'username': ''}), 200
+    
 
 @app.route('/logout', methods=['POST'])
 def logout_user():

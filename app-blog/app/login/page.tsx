@@ -22,7 +22,8 @@ const Login = () => {
             body: JSON.stringify({email, password})
         })
         if (response.ok) {
-            login()
+            const data = await response.json()
+            login(data.username)
             router.push('/')
         } else {
             const data = await response.json()
