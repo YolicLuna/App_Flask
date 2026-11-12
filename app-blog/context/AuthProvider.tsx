@@ -31,10 +31,41 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         }}
         checkAuthStatus();
     }, [])
-    const login = () => setIsAuthenticated(true)
-    const logout = () => setIsAuthenticated(false)
+
+    const register = async (username: string, email: string, password:string): Promise<{success: boolean, message: string}> => {
+        try {
+            const response = await fetch('http://localhost:5000/register', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, email, password})
+            })
+            if(response.ok) {
+                const data = await response.json()
+                setIsAuthenticated(true)
+                setUsername(data.username)
+                return {success: true, message:'Registro exitoso'}
+            } else {
+                return {success: false, message:'Error en el registro de ususario.'
+                }
+            }
+        } catch (error) {
+            console.error('Error al registrar usuario', error)
+            return {success: false, message:'Error de conexion.'}
+        }
+    } 
+
+    const login = (name: string) => {
+        setIsAuthenticated(true)
+        setUsername(name)
+    }
+
+    const logout = () => {
+        setIsAuthenticated(false)
+        setUsername('')
+    }
     return(
-        <AuthContext.Provider value={{isAuthenticated, loading, login,logout, username}}>
+        <AuthContext.Provider value={{isAuthenticated, loading, login,logout, username, register}}>
             {children}
         </AuthContext.Provider>
     )
