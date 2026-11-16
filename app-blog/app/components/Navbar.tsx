@@ -18,7 +18,6 @@ const Navbar: React.FC<NavbarProps> = ({articles, setFilteredArticles, onOpenCre
 
     const {fetchFavorites, showAllArticles, isShowingFavorites} = useArticles()
     const {isAuthenticated, logout, username} = useAuth()
-    console.log({username: username})
 
     const handleLogout = async () => {
         try {
