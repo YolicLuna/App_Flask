@@ -50,17 +50,24 @@ def login_user():
     user = User.query.filter_by(email=data['email']).first()
     if user and user.check_password(data['password']):
         session['user_id'] = user.id
-        return jsonify({'message': 'Inicio de sesion exitoso', 'username': user.username}), 200
+        return jsonify({
+            'message': 'Inicio de sesion exitoso',
+            'username': user.username,
+            'userId': user.id
+        }), 200
     return jsonify({'error': 'Credenciales invalidas'}), 401 
 
-@app.route('/check-auth', methods=['GET'])
 @app.route('/check-auth', methods=['GET'])
 def check_auth():
     user_id = session.get('user_id')
     if user_id:
         user = db.session.get(User, user_id)
         if user:
-            return jsonify({'authenticated': True, 'username': user.username}), 200
+            return jsonify({
+                'authenticated': True,
+                'username': user.username,
+                'userId': user_id
+            }), 200
     return jsonify({'authenticated': False, 'username': ''}), 200
     
 
@@ -76,6 +83,7 @@ def serialize_article(article, is_favorite=False):
         'content': article.content,
         'image_url': article.image_url,
         'author': article.author.username,
+        'userId': article.user_id,
         'created_at': article.created_at.strftime('%d-%m-%Y'),
         'isFavorite': is_favorite
     }
@@ -168,12 +176,20 @@ def update_article(id):
 # Se eliminan articulos.  
 @app.route('/articles/<int:id>', methods=['DELETE'])
 def delete_article(id):
+    if 'user_id' not in session:
+        return jsonify({'message': 'No autorizado'}), 401
+
     article = Article.query.get_or_404(id)
-    db.session.delete(article)
-    db.session.commit()
-    return jsonify({
-        'message': f'El articulo "{article.title}" se a eliminado con exito. '
-    }), 200
+
+    if article.user_id != session['user_id']:
+        return jsonify({'message': 'No autorixado para elimiar este articulo'}), 403
+    try:
+        db.seesion.delete(article)
+        db.session.commit()
+        return jsonify({'message': f'Articulo eliminado conexuto. Se elimino {articl.title}'})
+    except Exception as e:
+        db.session.rollba()
+        return jsonify({'message':'Error al eliminar el articulo', 'error': str(e)}), 500
 
 # Obtenemos un articulo.
 @app.route('/article/<int:article_id>', methods=['GET'])

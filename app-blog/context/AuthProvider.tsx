@@ -8,6 +8,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
     const [username, setUsername] = useState('');
+    const [userId, setUserId] = useState<number | null>(null);
 
     useEffect(() => {
         const checkAuthStatus = async () => {
@@ -17,9 +18,11 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                 if (data.authenticated) {
                     setIsAuthenticated(data.authenticated)
                     setUsername(data.username)
+                    setUserId(data.userId)
                 } else {
                     setIsAuthenticated(false)
                     setUsername('')
+                    setUserId(null)
                 }
             } catch (error){
                 console.error('Error al verificar la autenticacion', error)
@@ -55,17 +58,19 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         }
     } 
 
-    const login = (name: string) => {
+    const login = (name: string, id: number) => {
         setIsAuthenticated(true)
         setUsername(name)
+        setUserId(id)
     }
 
     const logout = () => {
         setIsAuthenticated(false)
         setUsername('')
+        setUserId(null)
     }
     return(
-        <AuthContext.Provider value={{isAuthenticated, loading, login,logout, username, register}}>
+        <AuthContext.Provider value={{isAuthenticated, loading, login,logout, username, register, userId}}>
             {children}
         </AuthContext.Provider>
     )
