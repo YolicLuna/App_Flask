@@ -21,7 +21,7 @@ El backend utiliza Python, Flask y Flask-SQLAlchemy para definir la API y gestio
 
 ### Arquitectura del Proyecto
 
-El backend concentra las rutas y la configuración de Flask en `app.py`. Los modelos de SQLAlchemy están en `Models/`: `User` administra las cuentas y sus publicaciones y favoritos, mientras que `Article` representa las publicaciones y la relación muchos a muchos de favoritos. El frontend Next.js se organiza con páginas para Inicio, registro, inicio de sesión y detalle de artículo, componentes reutilizables, proveedores de contexto para autenticación y artículos, y tipos TypeScript compartidos. El proveedor de autenticación gestiona el registro y el inicio de sesión, consulta la sesión activa y conserva el nombre de usuario para mostrarlo en la navegación.
+El backend concentra las rutas y la configuración de Flask en `app.py`. Los modelos de SQLAlchemy están en `Models/`: `User` administra las cuentas y sus publicaciones y favoritos, mientras que `Article` representa las publicaciones y la relación muchos a muchos de favoritos. El frontend Next.js se organiza con páginas para Inicio, registro, inicio de sesión y detalle de artículo, componentes reutilizables, proveedores de contexto para autenticación y artículos, y tipos TypeScript compartidos. El proveedor de autenticación conserva el nombre y el identificador del usuario, y cada artículo incluye el identificador de su autor para controlar las acciones disponibles en las tarjetas.
 
 ### Modelos de la Base de Datos
 
@@ -29,11 +29,11 @@ El sistema cuenta con dos entidades principales. `User` almacena el nombre de us
 
 ### Seguridad y Autenticación
 
-Las contraseñas se guardan usando las funciones de hash de Werkzeug, no en texto plano. Flask mantiene la sesión del usuario mediante una cookie; el frontend incluye credenciales en las solicitudes que necesitan conservarla. El endpoint `/check-auth` valida que el usuario de la sesión siga existiendo y devuelve su nombre cuando la sesión es válida. El inicio de sesión también devuelve el nombre de usuario, que el frontend muestra en la navegación. El registro crea la cuenta; para obtener una sesión y acceder a las funciones protegidas, inicia sesión después de registrarte. La creación de artículos y las operaciones de favoritos requieren una sesión iniciada. La API está configurada para aceptar solicitudes del frontend en `http://localhost:3000`.
+Las contraseñas se guardan usando las funciones de hash de Werkzeug, no en texto plano. Flask mantiene la sesión del usuario mediante una cookie; el frontend incluye credenciales en las solicitudes que necesitan conservarla. El endpoint `/check-auth` valida que el usuario de la sesión siga existiendo y devuelve su nombre e identificador cuando la sesión es válida. El inicio de sesión también devuelve esos datos, que el frontend utiliza para mostrar el usuario y reconocer sus artículos. El registro crea la cuenta; para obtener una sesión y acceder a las funciones protegidas, inicia sesión después de registrarte. La creación de artículos y las operaciones de favoritos requieren una sesión iniciada. La eliminación de artículos valida que exista una sesión y que el usuario sea el autor. La API está configurada para aceptar solicitudes del frontend en `http://localhost:3000`.
 
 ### Flujo de Publicación y Favoritos
 
-Un visitante puede consultar y buscar artículos, abrir su detalle y crear una cuenta desde `/register`. Después de registrarse e iniciar sesión, puede crear una publicación proporcionando título, contenido y URL de imagen. Los artículos se muestran en tarjetas con autor y fecha; desde ellas se puede abrir el detalle o marcar la publicación como favorita. La navegación muestra el nombre del usuario autenticado y permite alternar entre el catálogo y sus favoritos. Al seleccionar eliminar, SweetAlert2 muestra un diálogo de confirmación antes de borrar el artículo y una notificación de éxito después de confirmar.
+Un visitante puede consultar y buscar artículos, abrir su detalle y crear una cuenta desde `/register`. Después de registrarse e iniciar sesión, puede crear una publicación proporcionando título, contenido y URL de imagen. Los artículos se muestran en tarjetas con autor y fecha; desde ellas se puede abrir el detalle o marcar la publicación como favorita. La navegación muestra el nombre del usuario autenticado y permite alternar entre el catálogo y sus favoritos. La opción para eliminar solo aparece al autor de la publicación; al seleccionarla, SweetAlert2 solicita confirmación antes de enviar la eliminación.
 
 ### Pruebas de la API
 
@@ -125,7 +125,7 @@ App_Flask/
 | POST | `/create-article` | Crear un artículo asociado al usuario autenticado | Sí |
 | GET | `/article/<id>` | Obtener un artículo por identificador | No |
 | PUT | `/articles/<id>` | Actualizar el título y contenido de un artículo | No |
-| DELETE | `/articles/<id>` | Eliminar un artículo | No |
+| DELETE | `/articles/<id>` | Eliminar un artículo propio; requiere sesión y valida la autoría | Sí |
 
 ### Favoritos
 
@@ -146,9 +146,9 @@ Las solicitudes para registrar usuarios y crear artículos usan JSON. Ejemplo de
 
 Para actualizar un favorito, envía `{"isFavorite": true}` o `{"isFavorite": false}` a `POST /favorites/<id>`.
 
-El registro recibe `username`, `email` y `password`, y devuelve un mensaje de confirmación al crear la cuenta. El inicio de sesión recibe `email` y `password`; cuando las credenciales son válidas, responde con `{"message": "Inicio de sesion exitoso", "username": "nombre"}` y crea la sesión.
+El registro recibe `username`, `email` y `password`, y devuelve un mensaje de confirmación al crear la cuenta. El inicio de sesión recibe `email` y `password`; cuando las credenciales son válidas, responde con `{"message": "Inicio de sesion exitoso", "username": "nombre", "userId": 1}` y crea la sesión.
 
-`GET /check-auth` responde con `{"authenticated": true, "username": "nombre"}` cuando la sesión pertenece a un usuario válido. Si no hay una sesión válida, responde `{"authenticated": false, "username": ""}` con estado HTTP `200`.
+`GET /check-auth` responde con `{"authenticated": true, "username": "nombre", "userId": 1}` cuando la sesión pertenece a un usuario válido. Si no hay una sesión válida, responde `{"authenticated": false, "username": ""}` con estado HTTP `200`. Las respuestas de `GET /articles` incluyen `userId` para identificar al autor de cada artículo.
 
 ---
 
@@ -171,7 +171,7 @@ El registro recibe `username`, `email` y `password`, y devuelve un mensaje de co
 
 ## Seguridad
 
-Las contraseñas se almacenan como hashes generados por Werkzeug y la autenticación utiliza sesiones de Flask en cookies, no tokens JWT. La creación de artículos y el acceso y modificación de favoritos validan la sesión. Las rutas de actualización y eliminación de artículos actualmente no requieren autenticación en la API.
+Las contraseñas se almacenan como hashes generados por Werkzeug y la autenticación utiliza sesiones de Flask en cookies, no tokens JWT. La creación de artículos y el acceso y modificación de favoritos validan la sesión. La ruta de eliminación también requiere una sesión y comprueba que el usuario autenticado sea el autor; la ruta de actualización actualmente no requiere autenticación en la API.
 
 ---
 
@@ -181,7 +181,7 @@ Para probar la API con Postman:
 
 1. Inicia el backend siguiendo las instrucciones de Inicio Rápido.
 2. Usa las solicitudes de `postman/collections/Auth-1` para registrar un usuario e iniciar sesión. La respuesta del login incluye el nombre de usuario.
-3. Usa las solicitudes de `postman/collections/Articles` para listar, crear, consultar, actualizar o eliminar artículos y cambiar favoritos.
+3. Usa las solicitudes de `postman/collections/Articles` para listar, crear, consultar, actualizar o eliminar artículos propios y cambiar favoritos.
 4. Mantén la sesión de Postman para las solicitudes que requieren autenticación.
 
 La API también se puede probar con `curl` o cualquier cliente HTTP. No hay un comando de pruebas automatizadas configurado en el proyecto.

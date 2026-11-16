@@ -6,6 +6,7 @@ export interface Article{
   author: string;
   created_at: string;
   isFavorite: boolean;
+  userId: number | null;
 }
 
 export interface ArticleContextType {

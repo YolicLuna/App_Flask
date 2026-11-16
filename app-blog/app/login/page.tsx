@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthProvider";
+import Link from "next/link";
 
 const Login = () => {
     const [email, setEmail] = useState('')
@@ -23,7 +24,7 @@ const Login = () => {
         })
         if (response.ok) {
             const data = await response.json()
-            login(data.username)
+            login(data.username, data.userId)
             router.push('/')
         } else {
             const data = await response.json()
@@ -65,6 +66,15 @@ const Login = () => {
                     Iniciar Sesion
                 </button>
             </form>
+            <div className="text-center mt-6">
+                <p className="text-gray-400">¿No tienes cuenta? {''}
+                <Link href={'/register'}>
+                        <span className="text-devmoon-accent font-medium hover:text-white hover:underline transition-colors">
+                        Registrate 
+                        </span>
+                </Link>
+                </p>
+            </div>
         </div>
     )
 }

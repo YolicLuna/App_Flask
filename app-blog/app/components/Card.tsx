@@ -1,7 +1,7 @@
 
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faHeart as fasHeart, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CardProps } from '@/types/article';
 import { useAuth } from '@/context/AuthProvider';
@@ -9,11 +9,13 @@ import { useArticles } from '@/context/ArticleProvider';
 import Swal from 'sweetalert2';
 
 const Card: React.FC<CardProps> = ({id, deleteArticle}) => {
-      const { isAuthenticated } = useAuth()
+      const { isAuthenticated, userId } = useAuth()
       const {articles, toggleFavorite} = useArticles()
       const article = articles.find(article => article.id === id)
       
       if (!article) return null
+
+      const isAuthor = userId === article.userId;
 
       const confirmDelete = () => {
         Swal.fire({
@@ -52,19 +54,31 @@ const Card: React.FC<CardProps> = ({id, deleteArticle}) => {
       {/* Botones de interacción */}
       <div className="absolute top-4 right-4 flex space-x-2">
         {isAuthenticated && (
+          <>
+          {isAuthor && (
+              <button
+              onClick={confirmDelete}
+              className='bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg hover:bg-white transition-all duration-300 group'
+            >
+              <FontAwesomeIcon
+                icon={faTrash}
+                className='h-5 text-red-500 group-hover:scale-110 transition-all duration-300'
+              />
+            </button>
+          )}
           <button
-          onClick={() => toggleFavorite(id)}
-          className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg hover:bg-white transition-all duration-300 group"
-        >
-          <FontAwesomeIcon
-            icon={article.isFavorite ? fasHeart : farHeart}
-            className={`h-5 w-5 ${
-              article.isFavorite ? 'text-red-500' : 'text-gray-600'
-            } group-hover:scale-110 transition-all duration-300`}
-          />
+            onClick={() => toggleFavorite(id)}
+            className="bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg hover:bg-white transition-all duration-300 group"
+          >
+            <FontAwesomeIcon
+              icon={article.isFavorite ? fasHeart : farHeart}
+              className={`h-5 w-5 ${
+                article.isFavorite ? 'text-red-500' : 'text-gray-600'
+              } group-hover:scale-110 transition-all duration-300`}
+            />
         </button>
-        )
-        }
+          </>
+        )}
       </div>
 
       {/* Contenido */}
@@ -81,15 +95,7 @@ const Card: React.FC<CardProps> = ({id, deleteArticle}) => {
         <p className="text-gray-600 leading-relaxed mb-6">
           {article.content.length > 150 ? `${article.content.slice(0, 150)}...` : article.content}
         </p>
-        {isAuthenticated && (
-          <button 
-          type="button"
-          onClick={confirmDelete}
-          className='text-red-500 hover:text-red-700 text-sm font-medium mb-4'
-          >
-            Eliminar
-            </button>
-        )}
+
         {/* Footer con metadata y botón de leer más */}
         <div className="flex items-center justify-between mt-6 border-t border-gray-100 pt-4">
           <div className="flex items-center space-x-4">

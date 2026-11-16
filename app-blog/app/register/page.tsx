@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthProvider";
+import Link from "next/link";
 
 
 const Register = () => {
@@ -72,6 +73,15 @@ const Register = () => {
                 Registrarse
             </button>
         </form>
+        <div className="text-center mt-6">
+            <p className="text-gray-400">¿Ya tienes cuenta? {''}
+            <Link href={'/login'}>
+                <span className="text-devmoon-accent font-medium hover:text-white hover:underline transition-colors">
+                Iniciar sesion 
+                </span>
+            </Link>
+            </p>
+        </div>
     </div>
   )
 }
